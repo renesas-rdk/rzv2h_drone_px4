@@ -1,0 +1,35 @@
+# ActiveTrack pipeline configuration for Renesas RZ/V2H RDK board
+# Edit this file to tune detection/tracking behaviour
+
+active_track_detector:
+  ros__parameters:
+    device:         "/dev/video0"
+    width:          640
+    height:         480
+    fps:            30
+    model_dir:      "/home/root/ai_models/yolov8n"
+    conf_threshold: 0.25
+    nms_iou:        0.45
+    # UDP stream — set stream_enabled: true to view annotated frames on PC
+    # Run tools/stream_viewer.py on host to receive (sends heartbeat for unicast)
+    stream_enabled:  false
+    stream_dest_ip:  ""      # "" = auto-learn via heartbeat from stream_viewer.py
+    stream_port:     50002
+    stream_hb_port:  50001
+    stream_quality:  50
+    stream_skip:     2       # stream every 2nd frame (~15 fps over UDP)
+
+active_track_tracker:
+  ros__parameters:
+    max_age_frames:     30      # frames to keep a LOST track (30 @ 30fps = 1s)
+    min_hits:           3       # frames before a track is CONFIRMED
+    iou_threshold:      0.30    # high-conf IoU threshold for matching
+    low_conf_threshold: 0.10    # 2nd-stage IoU threshold
+
+active_track_selector:
+  ros__parameters:
+    # COCO class 0=person, 2=car, 15=cat, 16=dog, 17=horse ...
+    default_class_id: 0
+    # "highest_confidence" | "nearest_center" | "largest_bbox"
+    default_policy:   "highest_confidence"
+    lock_timeout_s:   2.0

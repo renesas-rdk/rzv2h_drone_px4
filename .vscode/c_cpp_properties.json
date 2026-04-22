@@ -1,0 +1,52 @@
+{
+  "configurations": [
+    {
+      "name": "Generic",
+      "configurationProvider": "ms-vscode.cmake-tools",
+      "compileCommands": "${workspaceFolder}/Debug/compile_commands.json",
+      "defines": [
+        "_DEBUG",
+        "UNICODE",
+        "_UNICODE",
+        "CONFIG_ORB_COMMUNICATOR",
+        "CONFIG_I2C",
+        "USE_I2C",
+        "CONFIG_SPI",
+        "CONFIG_UART",
+        "BSP_SUPPORT_CORE_CR8=1",
+        "BSP_CR8_CORE_NUM=0",
+        "__cplusplus",
+        "__PX4_POSIX=1",
+        "__PX4_FREERTOS=1",
+        "CONFIG_RZV_FSP=1",
+        "_RENESAS_RZV_",
+        "_RZV_CORE=CR8_0",
+        "_RZV_ORDINAL=2"
+      ],
+      "forcedInclude": [
+        "${workspaceFolder}/px4/platforms/posix/include/system_config.h",
+        "${workspaceFolder}/px4/src/modules/mavlink/mavlink_bridge_header.h"
+      ],
+      "intelliSenseMode": "gcc-arm",
+      "compilerPath": "${env:TOOLCHAIN_BASE_PATH}/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc",
+      "compilerArgs": [
+        "-mthumb",
+        "-mcpu=cortex-r8",
+        "-mfloat-abi=hard",
+        "-mfpu=vfpv3-d16"
+      ],
+      "cStandard": "c99",
+      "cppStandard": "c++14",
+      "includePath": [
+        "${workspaceFolder}/**"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/**"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    }
+  ],
+  "version": 4
+}

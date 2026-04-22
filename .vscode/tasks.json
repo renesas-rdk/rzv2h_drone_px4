@@ -1,0 +1,57 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "${workspaceFolder}/compile.sh build --jobs 4 && cmake --build ${workspaceFolder}/Debug --target memory_layout_check"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Rebuild",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "${workspaceFolder}/compile.sh rebuild --jobs 4 && cmake --build ${workspaceFolder}/Debug --target memory_layout_check"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Show ccache stats",
+      "type": "shell",
+      "command": "ccache",
+      "args": ["--show-stats"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      }
+    }
+  ]
+}

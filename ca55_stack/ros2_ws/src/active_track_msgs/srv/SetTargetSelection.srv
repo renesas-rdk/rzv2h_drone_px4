@@ -1,0 +1,13 @@
+# Mode constants
+uint8 MODE_CLASS_FILTER = 0   # Auto-pick best target of given class
+uint8 MODE_TRACK_ID     = 1   # Lock an explicit track_id
+uint8 MODE_CLEAR        = 2   # Stop following, clear target
+
+uint8 mode
+uint32 class_id          # Used when mode == MODE_CLASS_FILTER (COCO class 0=person, 2=car, ...)
+uint32 track_id          # Used when mode == MODE_TRACK_ID
+# Policy for class filter: "highest_confidence" | "nearest_center" | "largest_bbox"
+string policy
+---
+bool success
+string message

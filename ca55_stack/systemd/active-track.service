@@ -1,0 +1,20 @@
+[Unit]
+Description=ActiveTrack Pipeline (DRP-AI YOLOv8 detector + tracker + selector)
+After=custom-xrce-agent.service
+Requires=custom-xrce-agent.service
+
+[Service]
+Type=simple
+User=root
+Environment="ROS_DOMAIN_ID=0"
+ExecStartPre=/bin/bash -c 'source /home/root/ros2_active_track/setup.bash'
+ExecStart=/bin/bash -c 'source /home/root/ros2_active_track/setup.bash && ros2 launch active_track_bringup active_track.launch.py'
+Restart=on-failure
+RestartSec=5
+# CRITICAL: always stop with SIGINT to cleanly shut down DRP-AI hardware
+# Using SIGKILL will hang DRP-AI and require board reboot
+KillSignal=SIGINT
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target

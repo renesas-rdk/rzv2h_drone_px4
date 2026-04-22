@@ -1,0 +1,15 @@
+# Git attributes for consistent behavior across platforms
+
+# Preserve existing line endings - don't auto-convert
+* -text
+
+# Shell scripts should be executable but preserve line endings
+*.sh -text
+
+# Binary files
+*.bin binary
+*.elf binary
+*.a binary
+*.so binary
+*.dll binary
+*.exe binary

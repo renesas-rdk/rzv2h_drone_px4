@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<raConfiguration version="11">
+  <generalSettings>
+    <option key="#Board#" value="board.rzv2h_evk"/>
+    <option key="CPU" value="RZV2H"/>
+    <option key="Core" value="CR8_0"/>
+    <option key="#TargetName#" value="R9A09G057H44GBG"/>
+    <option key="#TargetARCHITECTURE#" value="cortex-r8"/>
+    <option key="#DeviceCommand#" value="R9A09G057H44GBG"/>
+    <option key="#RTOS#" value="rtos.awsfreertos"/>
+    <option key="#pinconfiguration#" value="R9A09G057H44GBG.pincfg"/>
+    <option key="#FSPVersion#" value="3.1.0"/>
+    <option key="#ConfigurationFragments#" value="Renesas##BSP##Board##rzv2h_evk##"/>
+    <option key="#SELECTED_TOOLCHAIN#" value="gcc-arm-embedded"/>
+    <option key="#ToolchainVersion#" value="13.3.1.arm-13-24"/>
+  </generalSettings>
+  <raBspConfiguration/>
+  <raClockConfiguration>
+    <node id="board.clock.osc.freq" option="board.clock.osc.freq.value"/>
+    <node id="board.clock.pllcm33.freq" mul="1600000000" option="_edit"/>
+    <node id="board.clock.dummy1" option="board.clock.dummy1.freq"/>
+    <node id="board.clock.cddiv0.divctl0" option="board.clock.cddiv0.divctl0.2"/>
+    <node id="board.clock.pllcm33.div1" option="board.clock.pllcm33.div1.2"/>
+    <node id="board.clock.atclk.display" option="board.clock.atclk.display.value"/>
+    <node id="board.clock.pllcm33.div2" option="board.clock.pllcm33.div2.4"/>
+    <node id="board.clock.cddiv0.divctl1" option="board.clock.cddiv0.divctl1.2"/>
+    <node id="board.clock.i7clk.display" option="board.clock.i7clk.display.value"/>
+    <node id="board.clock.pllcm33.div3" option="board.clock.pllcm33.div3.2"/>
+    <node id="board.clock.p0clk.display" option="board.clock.p0clk.display.value"/>
+    <node id="board.clock.pllcm33.div4" option="board.clock.pllcm33.div4.16"/>
+    <node id="board.clock.p1clk.display" option="board.clock.p1clk.display.value"/>
+    <node id="board.clock.pllcm33.div5" option="board.clock.pllcm33.div5.32"/>
+    <node id="board.clock.p2clk.display" option="board.clock.p2clk.display.value"/>
+    <node id="board.clock.pllcm33.div6" option="board.clock.pllcm33.div6.2"/>
+    <node id="board.clock.csdiv1.divctl0" option="board.clock.csdiv1.divctl0.8"/>
+    <node id="board.clock.csdiv1.divctl1" option="board.clock.csdiv1.divctl1.2"/>
+    <node id="board.clock.adcclk.display" option="board.clock.adcclk.display.value"/>
+    <node id="board.clock.pllcm33.div7" option="board.clock.pllcm33.div7.3"/>
+    <node id="board.clock.ssel1.selctl2.sel" option="board.clock.ssel1.selctl2.sel.533"/>
+    <node id="board.clock.ssel1.selctl3.sel" option="board.clock.ssel1.selctl3.sel.smux2_xspi_clk0"/>
+    <node id="board.clock.csdiv0.divctl3" option="board.clock.csdiv0.divctl3.2"/>
+    <node id="board.clock.spi0clk.display" option="board.clock.spi0clk.display.value"/>
+    <node id="board.clock.pllcm33.div8" option="board.clock.pllcm33.div8.5"/>
+    <node id="board.clock.pllcm33.div9" option="board.clock.pllcm33.div9.2"/>
+    <node id="board.clock.spi1clk.display" option="board.clock.spi1clk.display.value"/>
+    <node id="board.clock.pllcln.freq" mul="1600000000" option="_edit"/>
+    <node id="board.clock.dummy2" option="board.clock.dummy2.freq"/>
+    <node id="board.clock.pllcln.div1" option="board.clock.pllcln.div1.2"/>
+    <node id="board.clock.sdclk.display" option="board.clock.sdclk.display.value"/>
+    <node id="board.clock.pllcln.div2" option="board.clock.pllcln.div2.4"/>
+    <node id="board.clock.p3clk.display" option="board.clock.p3clk.display.value"/>
+    <node id="board.clock.pllcln.div3" option="board.clock.pllcln.div3.8"/>
+    <node id="board.clock.p4clk.display" option="board.clock.p4clk.display.value"/>
+    <node id="board.clock.pllcln.div4" option="board.clock.pllcln.div4.16"/>
+    <node id="board.clock.p5clk.display" option="board.clock.p5clk.display.value"/>
+    <node id="board.clock.pllcln.div5" option="board.clock.pllcln.div5.20"/>
+    <node id="board.clock.canclk.display" option="board.clock.canclk.display.value"/>
+    <node id="board.clock.pllcln.div6" option="board.clock.pllcln.div6.32"/>
+    <node id="board.clock.p6clk.display" option="board.clock.p6clk.display.value"/>
+    <node id="board.clock.plldty.freq" mul="1600000000" option="_edit"/>
+    <node id="board.clock.dummy3" option="board.clock.dummy3.freq"/>
+    <node id="board.clock.cddiv2.divctl1" option="board.clock.cddiv2.divctl1.2"/>
+    <node id="board.clock.i6clk.display" option="board.clock.i6clk.display.value"/>
+    <node id="board.clock.cddiv0.divctl2" option="board.clock.cddiv0.divctl2.2"/>
+    <node id="board.clock.plldty.div1" option="board.clock.plldty.div1.2"/>
+    <node id="board.clock.p7clk.display" option="board.clock.p7clk.display.value"/>
+    <node id="board.clock.plldty.div2" option="board.clock.plldty.div2.4"/>
+    <node id="board.clock.p8clk.display" option="board.clock.p8clk.display.value"/>
+    <node id="board.clock.plldty.div3" option="board.clock.plldty.div3.8"/>
+    <node id="board.clock.p9clk.display" option="board.clock.p9clk.display.value"/>
+    <node id="board.clock.plldty.div4" option="board.clock.plldty.div4.8"/>
+    <node id="board.clock.p10clk.display" option="board.clock.p10clk.display.value"/>
+    <node id="board.clock.plldty.div5" option="board.clock.plldty.div5.16"/>
+    <node id="board.clock.ztclk.display" option="board.clock.ztclk.display.value"/>
+    <node id="board.clock.cddiv3.divctl2" option="board.clock.cddiv3.divctl2.2"/>
+    <node id="board.clock.plldty.div6" option="board.clock.plldty.div6.4"/>
+    <node id="board.clock.p11clk.display" option="board.clock.p11clk.display.value"/>
+    <node id="board.clock.cddiv2.divctl2" option="board.clock.cddiv2.divctl2.2"/>
+    <node id="board.clock.plldty.div7" option="board.clock.plldty.div7.2"/>
+    <node id="board.clock.p12clk.display" option="board.clock.p12clk.display.value"/>
+    <node id="board.clock.pllca55.freq" mul="1800000000" option="_edit"/>
+    <node id="board.clock.dummy4" option="board.clock.dummy4.freq"/>
+    <node id="board.clock.cddiv1.divctl0" option="board.clock.cddiv1.divctl0.1"/>
+    <node id="board.clock.i0clk.display" option="board.clock.i0clk.display.value"/>
+    <node id="board.clock.cddiv1.divctl1" option="board.clock.cddiv1.divctl1.1"/>
+    <node id="board.clock.i1clk.display" option="board.clock.i1clk.display.value"/>
+    <node id="board.clock.cddiv1.divctl2" option="board.clock.cddiv1.divctl2.1"/>
+    <node id="board.clock.i2clk.display" option="board.clock.i2clk.display.value"/>
+    <node id="board.clock.cddiv1.divctl3" option="board.clock.cddiv1.divctl3.1"/>
+    <node id="board.clock.i3clk.display" option="board.clock.i3clk.display.value"/>
+    <node id="board.clock.pllca55.div1" option="board.clock.pllca55.div1.2"/>
+    <node id="board.clock.cddiv2.divctl0" option="board.clock.cddiv2.divctl0.2"/>
+    <node id="board.clock.i4clk.display" option="board.clock.i4clk.display.value"/>
+    <node id="board.clock.plldrp.freq" mul="1260000000" option="_edit"/>
+    <node id="board.clock.dummy5" option="board.clock.dummy5.freq"/>
+    <node id="board.clock.ssel0.selctl1.sel" option="board.clock.ssel0.selctl1.sel.plldrp"/>
+    <node id="board.clock.ssel0.selctl0.sel" option="board.clock.ssel0.selctl0.sel.smux2_ca55_sclk0"/>
+    <node id="board.clock.cddiv0.divctl3" option="board.clock.cddiv0.divctl3.1"/>
+    <node id="board.clock.i5clk.display" option="board.clock.i5clk.display.value"/>
+    <node id="board.clock.pllvdo.freq" mul="1260000000" option="_edit"/>
+    <node id="board.clock.dummy6" option="board.clock.dummy6.freq"/>
+    <node id="board.clock.cddiv3.divctl3" option="board.clock.cddiv3.divctl3.2"/>
+    <node id="board.clock.m0clk.display" option="board.clock.m0clk.display.value"/>
+    <node id="board.clock.cddiv4.divctl0" option="board.clock.cddiv4.divctl0.2"/>
+    <node id="board.clock.m1clk.display" option="board.clock.m1clk.display.value"/>
+    <node id="board.clock.cddiv4.divctl1" option="board.clock.cddiv4.divctl1.2"/>
+    <node id="board.clock.m2clk.display" option="board.clock.m2clk.display.value"/>
+    <node id="board.clock.cddiv4.divctl2" option="board.clock.cddiv4.divctl2.2"/>
+    <node id="board.clock.m3clk.display" option="board.clock.m3clk.display.value"/>
+    <node id="board.clock.cddiv2.divctl3" option="board.clock.cddiv2.divctl3.2"/>
+    <node id="board.clock.ispclk.display" option="board.clock.ispclk.display.value"/>
+    <node id="board.clock.cddiv3.divctl0" option="board.clock.cddiv3.divctl0.2"/>
+    <node id="board.clock.isuclk.display" option="board.clock.isuclk.display.value"/>
+    <node id="board.clock.plleth.freq" mul="1000000000" option="_edit"/>
+    <node id="board.clock.dummy7" option="board.clock.dummy7.freq"/>
+    <node id="board.clock.plleth.div1" option="board.clock.plleth.div1.4"/>
+    <node id="board.clock.csdiv0.divctl0" option="board.clock.csdiv0.divctl0.2"/>
+    <node id="board.clock.ssel0.selctl2.sel" option="board.clock.ssel0.selctl2.sel.plleth_gbe0_gear"/>
+    <node id="board.clock.ethtx0clk.display" option="board.clock.ethtx0clk.display.value"/>
+    <node id="board.clock.et0_txc_txclk.freq" option="board.clock.et0_txc_txclk.freq.value"/>
+    <node id="board.clock.ssel0.selctl3.sel" option="board.clock.ssel0.selctl3.sel.et0_rxc_rxclk"/>
+    <node id="board.clock.ethrx0clk.display" option="board.clock.ethrx0clk.display.value"/>
+    <node id="board.clock.et0_rxc_rxclk.freq" option="board.clock.et0_rxc_rxclk.freq.value"/>
+    <node id="board.clock.csdiv0.divctl1" option="board.clock.csdiv0.divctl1.2"/>
+    <node id="board.clock.ssel1.selctl0.sel" option="board.clock.ssel1.selctl0.sel.plleth_gbe1_gear"/>
+    <node id="board.clock.ethtx1clk.display" option="board.clock.ethtx1clk.display.value"/>
+    <node id="board.clock.et1_txc_txclk.freq" option="board.clock.et1_txc_txclk.freq.value"/>
+    <node id="board.clock.ssel1.selctl1.sel" option="board.clock.ssel1.selctl1.sel.et1_rxc_rxclk"/>
+    <node id="board.clock.ethrx1clk.display" option="board.clock.ethrx1clk.display.value"/>
+    <node id="board.clock.et1_rxc_rxclk.freq" option="board.clock.et1_rxc_rxclk.freq.value"/>
+    <node id="board.clock.plleth.div2" option="board.clock.plleth.div2.2"/>
+    <node id="board.clock.hpclk.display" option="board.clock.hpclk.display.value"/>
+    <node id="board.clock.plleth.div3" option="board.clock.plleth.div3.4"/>
+    <node id="board.clock.csdiv0.divctl2" option="board.clock.csdiv0.divctl2.16"/>
+    <node id="board.clock.lpclk.display" option="board.clock.lpclk.display.value"/>
+    <node id="board.clock.plldsi.freq" mul="297000000" option="_edit"/>
+    <node id="board.clock.dummy8" option="board.clock.dummy8.freq"/>
+    <node id="board.clock.csdiv1.divctl2" option="board.clock.csdiv0.divctl2.2"/>
+    <node id="board.clock.m4clk.display" option="board.clock.m4clk.display.value"/>
+    <node id="board.clock.pllgpu.freq" mul="1260000000" option="_edit"/>
+    <node id="board.clock.dummy9" option="board.clock.dummy9.freq"/>
+    <node id="board.clock.cddiv3.divctl1" option="board.clock.cddiv3.divctl1.2"/>
+    <node id="board.clock.gpuclk.display" option="board.clock.gpuclk.display.value"/>
+    <node id="board.clock.pllddr0.freq" mul="800000000" option="_edit"/>
+    <node id="board.clock.dummy10" option="board.clock.dummy10.freq"/>
+    <node id="board.clock.pllddr1.freq" mul="800000000" option="_edit"/>
+    <node id="board.clock.dummy11" option="board.clock.dummy11.freq"/>
+    <node id="board.clock.osc.div" option="board.clock.osc.div.5"/>
+    <node id="board.clock.osc2clk.display" option="board.clock.osc2clk.display.value"/>
+  </raClockConfiguration>
+  <raPinConfiguration>
+    <pincfg active="true" name="" symbol="">
+      <configSetting altId="gpt10.gtioc10b.p53" configurationId="gpt10.gtioc10b" isUsedByDriver="true" peripheral="GPT10"/>
+      <configSetting altId="gpt6.gtioc6a.pa4" configurationId="gpt6.gtioc6a" isUsedByDriver="true" peripheral="GPT6"/>
+      <configSetting altId="gpt7.gtioc7b.pa7" configurationId="gpt7.gtioc7b" isUsedByDriver="true" peripheral="GPT7"/>
+      <configSetting altId="gpt9.gtioc9a.p96" configurationId="gpt9.gtioc9a" isUsedByDriver="true" peripheral="GPT9"/>
+      <configSetting altId="p50.input" configurationId="p50"/>
+      <configSetting altId="p52.input" configurationId="p52"/>
+      <configSetting altId="p97.output.toinput.low" configurationId="p97"/>
+      <configSetting altId="pa6.output.toinput.low" configurationId="pa6"/>
+      <configSetting altId="rsci4.rxd4_miso4_scl4.p71" configurationId="rsci4.rxd4_miso4_scl4" isUsedByDriver="true" peripheral="RSCI4"/>
+      <configSetting altId="rsci4.txd4_mosi4_sda4.p70" configurationId="rsci4.txd4_mosi4_sda4" isUsedByDriver="true" peripheral="RSCI4"/>
+      <configSetting altId="rsci5.rxd5_miso5_scl5.p73" configurationId="rsci5.rxd5_miso5_scl5" isUsedByDriver="true" peripheral="RSCI5"/>
+      <configSetting altId="rsci5.txd5_mosi5_sda5.p72" configurationId="rsci5.txd5_mosi5_sda5" isUsedByDriver="true" peripheral="RSCI5"/>
+      <configSetting altId="rsci6.rxd6_miso6_scl6.p75" configurationId="rsci6.rxd6_miso6_scl6" isUsedByDriver="true" peripheral="RSCI6"/>
+      <configSetting altId="rsci7.rxd7_miso7_scl7.p77" configurationId="rsci7.rxd7_miso7_scl7" isUsedByDriver="true" peripheral="RSCI7"/>
+      <configSetting altId="rsci7.txd7_mosi7_sda7.p76" configurationId="rsci7.txd7_mosi7_sda7" isUsedByDriver="true" peripheral="RSCI7"/>
+      <configSetting altId="rsci9.rxd9_miso9_scl9.p83" configurationId="rsci9.rxd9_miso9_scl9" isUsedByDriver="true" peripheral="RSCI9"/>
+      <configSetting altId="rsci9.txd9_mosi9_sda9.p82" configurationId="rsci9.txd9_mosi9_sda9" isUsedByDriver="true" peripheral="RSCI9"/>
+      <configSetting altId="rspi0.misoa.p91" configurationId="rspi0.misoa" isUsedByDriver="true" peripheral="RSPI0"/>
+      <configSetting altId="rspi0.mosia.p90" configurationId="rspi0.mosia" isUsedByDriver="true" peripheral="RSPI0"/>
+      <configSetting altId="rspi0.rspcka.p92" configurationId="rspi0.rspcka" isUsedByDriver="true" peripheral="RSPI0"/>
+      <configSetting altId="rspi0.ssla0.p93" configurationId="rspi0.ssla0" isUsedByDriver="true" peripheral="RSPI0"/>
+      <configSetting altId="rspi0.ssla1.p94" configurationId="rspi0.ssla1" isUsedByDriver="true" peripheral="RSPI0"/>
+    </pincfg>
+  </raPinConfiguration>
+</raConfiguration>

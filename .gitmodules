@@ -1,0 +1,8 @@
+[submodule "px4"]
+	path = px4
+	url = https://github.com/renesas-rdk/PX4-Autopilot.git
+	branch = feature/rzv2h-freertos
+[submodule "ca55_stack/xrce_dds_agent/Micro-XRCE-DDS-Agent"]
+	path = ca55_stack/xrce_dds_agent/Micro-XRCE-DDS-Agent
+	url = https://github.com/renesas-rdk/Micro-XRCE-DDS-Agent.git
+	branch = feature/rzv2h-rpmsg-transport

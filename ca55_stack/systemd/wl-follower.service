@@ -1,0 +1,17 @@
+[Unit]
+Description=Wheel-Legged Robot Follower Node
+After=active-track.service
+Requires=active-track.service
+
+[Service]
+Type=simple
+User=root
+Environment="ROS_DOMAIN_ID=0"
+ExecStart=/bin/bash -c 'source /home/root/ros2_active_track/setup.bash && ros2 run wl_follower wl_follower_node'
+Restart=on-failure
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target

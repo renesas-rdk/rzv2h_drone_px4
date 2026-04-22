@@ -1,0 +1,19 @@
+[Unit]
+Description=Custom XRCE-DDS Agent (OpenAMP/RPMsg bridge CR8 <-> ROS2)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+EnvironmentFile=-/etc/default/custom_xrce_agent
+ExecStart=/usr/bin/CustomXRCEAgent -c 2 -v 1 \
+    --qgc-ip ${QGC_IP} \
+    --ai-camera ${AI_CAMERA} \
+    --ai-model ${AI_MODEL}
+Restart=on-failure
+RestartSec=3
+KillSignal=SIGINT
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target

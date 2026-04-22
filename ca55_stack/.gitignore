@@ -1,0 +1,21 @@
+# Build artifacts
+xrce_dds_agent/src/build/
+xrce_dds_agent/build/
+xrce_dds_agent/Micro-XRCE-DDS-Agent/build/
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+
+# Prebuilt binaries (large; copy from wheel_legged_robot or Renesas SDK)
+third_party_bin/lib/
+third_party_bin/include/
+third_party_bin/models/
+
+# Logs
+*.log
+running_ca55.log
+
+# Editor
+.vscode/
+*.swp
+__pycache__/

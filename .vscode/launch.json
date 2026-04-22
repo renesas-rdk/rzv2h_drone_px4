@@ -1,0 +1,73 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "cortex-debug (rzv2h-cr8)",
+        "cwd": "${workspaceRoot}",
+        "executable": "${workspaceRoot}/Debug/rzv2h_px4_freertos.elf",
+        "armToolchainPath": "${env:TOOLCHAIN_BASE_PATH}/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi/bin",
+        "request": "launch",
+        "type": "cortex-debug",
+        "servertype": "jlink",
+        "serverpath": "/opt/SEGGER/JLink/JLinkGDBServer",
+        "serverArgs": [
+          "-speed", "15000",
+            // "-select", "IP=10.231.20.16:19023", // Need to check the IP address and Port of the JLink server
+            // "-select", "IP=192.168.1.89:19023", // incase of running on wsl, need to run jlinkRemoteServer on windown
+        ],
+        "device": "R9A09G057H44_R8_0", // R9A09G057H44_M33_0/R9A09G057H44_R8_0
+        // "serialNumber": "52006677", // 51028188/52006677/51026290
+        "showDevDebugOutput": "parsed",
+        // "runToEntryPoint": "main",
+        "rttConfig": {
+          "enabled": true,
+          "address": "auto",
+          "decoders": [
+            {
+              "label": "rtt_0",
+              "port": 0,
+              "type": "console",
+            }
+          ]
+        },
+        "liveWatch": {
+          "enabled": true,
+          "samplesPerSecond": 4
+        },
+        /* https://github.com/Marus/cortex-debug/issues/955#issuecomment-1806828308
+            We have to reset after FW download, because we have no idea where you PC/SP are.
+            Many devices use temporary FW to program the device. Besides, a 'reset' should always work.
+            This is how 99% of devices work.
+            If a reset causes a problem, should take it up with your device manufacturer and their openocd scripts.
+            Btw, the Reset/Restart buttons also will not work.
+        */
+        "overrideLaunchCommands": [
+          "monitor reset",    // Reset the target
+          "monitor halt",     // Halt the target
+          "load"              // Load the binary
+          // "c"              // Continue the target (not be used in CR8)
+        ],
+      },
+      // {
+      //   // this config can work but can't open the rttviewer - if open, it's stuck
+      //   // in e2studio, it works by opening the rttviewer after the debug session starts
+      //   "name": "Renesas debug (rzv2h-cr8)",
+      //   "type": "renesas-hardware",
+      //   "request": "launch",
+      //   "target": {
+      //     "deviceFamily": "RZ",
+      //     "device": "R9A09G057H44_R8_0",  // R9A09G057H44_M33_0 / R9A09G057H44_R8_0
+      //     "debuggerType": "SEGGERJLINKARM",
+      //     "serverParameters": [
+      //       "-t", "R9A09G057H44_R8_0",
+      //       "-uInteface=", "SWD",
+      //       "-uIfSpeed=", "15000",
+      //       // "-uSelect=", "USB=51026290",
+      //     ]
+      //   }
+      // }
+    ]
+}

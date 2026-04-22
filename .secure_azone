@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<azone>
+    <rzone name="R9A09G057H44GBG.rzone"/>
+    <partition>
+        <peripheral name="RIIC8.CM33_0" group="RIIC" security="s"/>
+        <peripheral name="GTM2.CM33_0" group="GTM" security="s"/>
+        <peripheral name="ICU.CM33_0">
+            <slot name="IRQ19.CM33_0" secure="true"/>
+            <slot name="IRQ222.CM33_0" secure="true"/>
+            <slot name="IRQ223.CM33_0" secure="true"/>
+            <slot name="IRQ224.CM33_0" secure="true"/>
+            <slot name="IRQ225.CM33_0" secure="true"/>
+            <slot name="IRQ226.CM33_0" secure="true"/>
+            <slot name="IRQ227.CM33_0" secure="true"/>
+            <slot name="IRQ293.CM33_0" secure="true"/>
+            <slot name="IRQ353.CM33_0" secure="true"/>
+            <slot name="IRQ354.CM33_0" secure="true"/>
+        </peripheral>
+        <peripheral name="PORT5.CR8_0" group="PORT">
+            <slot name="P50.CR8_0" secure="true"/>
+            <slot name="P52.CR8_0" secure="true"/>
+            <slot name="P53.CR8_0" secure="true"/>
+        </peripheral>
+        <peripheral name="PORT7.CR8_0" group="PORT">
+            <slot name="P70.CR8_0" secure="true"/>
+            <slot name="P71.CR8_0" secure="true"/>
+            <slot name="P72.CR8_0" secure="true"/>
+            <slot name="P73.CR8_0" secure="true"/>
+            <slot name="P75.CR8_0" secure="true"/>
+            <slot name="P76.CR8_0" secure="true"/>
+            <slot name="P77.CR8_0" secure="true"/>
+        </peripheral>
+        <peripheral name="PORT8.CR8_0" group="PORT">
+            <slot name="P82.CR8_0" secure="true"/>
+            <slot name="P83.CR8_0" secure="true"/>
+        </peripheral>
+        <peripheral name="PORT9.CR8_0" group="PORT">
+            <slot name="P90.CR8_0" secure="true"/>
+            <slot name="P91.CR8_0" secure="true"/>
+            <slot name="P92.CR8_0" secure="true"/>
+            <slot name="P93.CR8_0" secure="true"/>
+            <slot name="P94.CR8_0" secure="true"/>
+            <slot name="P96.CR8_0" secure="true"/>
+            <slot name="P97.CR8_0" secure="true"/>
+        </peripheral>
+        <peripheral name="PORTA.CR8_0" group="PORT">
+            <slot name="PA4.CR8_0" secure="true"/>
+            <slot name="PA6.CR8_0" secure="true"/>
+            <slot name="PA7.CR8_0" secure="true"/>
+        </peripheral>
+        <peripheral name="GTM4.CR8_0" group="GTM" security=""/>
+        <peripheral name="GTM1.CR8_0" group="GTM" security=""/>
+        <peripheral name="RSPI0.CR8_0" group="RSPI" security=""/>
+        <peripheral name="DMAC0_0.CR8_0" group="DMAC" security=""/>
+        <peripheral name="DMAC0_1.CR8_0" group="DMAC" security=""/>
+        <peripheral name="RSCI6.CR8_0" group="RSCI" security=""/>
+        <peripheral name="GPT6.CR8_0" group="GPT" security=""/>
+        <peripheral name="GPT7.CR8_0" group="GPT" security=""/>
+        <peripheral name="GPT9.CR8_0" group="GPT" security=""/>
+        <peripheral name="GPT10.CR8_0" group="GPT" security=""/>
+        <peripheral name="GTM0.CR8_0" group="GTM" security=""/>
+        <peripheral name="ICU_EXT_TINT0.CR8_0" group="ICU_EXT_IRQ" security=""/>
+        <peripheral name="RSCI5.CR8_0" group="RSCI" security=""/>
+        <peripheral name="DMAC0_4.CR8_0" group="DMAC" security=""/>
+        <peripheral name="DMAC0_5.CR8_0" group="DMAC" security=""/>
+        <peripheral name="RSCI4.CR8_0" group="RSCI" security=""/>
+        <peripheral name="DMAC0_6.CR8_0" group="DMAC" security=""/>
+        <peripheral name="DMAC0_7.CR8_0" group="DMAC" security=""/>
+        <peripheral name="RSCI9.CR8_0" group="RSCI" security=""/>
+        <peripheral name="DMAC0_8.CR8_0" group="DMAC" security=""/>
+        <peripheral name="DMAC0_9.CR8_0" group="DMAC" security=""/>
+        <peripheral name="RSCI7.CR8_0" group="RSCI" security=""/>
+        <peripheral name="GTM3.CR8_0" group="GTM" security=""/>
+        <peripheral name="ICU.CR8_0">
+            <slot name="IRQ17.CR8_0" secure="true"/>
+            <slot name="IRQ18.CR8_0" secure="true"/>
+            <slot name="IRQ20.CR8_0" secure="true"/>
+            <slot name="IRQ21.CR8_0" secure="true"/>
+            <slot name="IRQ89.CR8_0" secure="true"/>
+            <slot name="IRQ90.CR8_0" secure="true"/>
+            <slot name="IRQ93.CR8_0" secure="true"/>
+            <slot name="IRQ94.CR8_0" secure="true"/>
+            <slot name="IRQ95.CR8_0" secure="true"/>
+            <slot name="IRQ96.CR8_0" secure="true"/>
+            <slot name="IRQ97.CR8_0" secure="true"/>
+            <slot name="IRQ98.CR8_0" secure="true"/>
+            <slot name="IRQ106.CR8_0" secure="true"/>
+            <slot name="IRQ107.CR8_0" secure="true"/>
+            <slot name="IRQ138.CR8_0" secure="true"/>
+            <slot name="IRQ139.CR8_0" secure="true"/>
+            <slot name="IRQ140.CR8_0" secure="true"/>
+            <slot name="IRQ141.CR8_0" secure="true"/>
+            <slot name="IRQ144.CR8_0" secure="true"/>
+            <slot name="IRQ145.CR8_0" secure="true"/>
+            <slot name="IRQ146.CR8_0" secure="true"/>
+            <slot name="IRQ147.CR8_0" secure="true"/>
+            <slot name="IRQ150.CR8_0" secure="true"/>
+            <slot name="IRQ151.CR8_0" secure="true"/>
+            <slot name="IRQ152.CR8_0" secure="true"/>
+            <slot name="IRQ153.CR8_0" secure="true"/>
+            <slot name="IRQ158.CR8_0" secure="true"/>
+            <slot name="IRQ159.CR8_0" secure="true"/>
+            <slot name="IRQ168.CR8_0" secure="true"/>
+            <slot name="IRQ169.CR8_0" secure="true"/>
+            <slot name="IRQ170.CR8_0" secure="true"/>
+            <slot name="IRQ171.CR8_0" secure="true"/>
+            <slot name="IRQ314.CR8_0" secure="true"/>
+            <slot name="IRQ353.CR8_0" secure="true"/>
+            <slot name="IRQ354.CR8_0" secure="true"/>
+            <slot name="IRQ355.CR8_0" secure="true"/>
+        </peripheral>
+    </partition>
+    <zones>
+        <zone name="CM33_0_S" Pname="CM33_0" security="s">
+            <assign group="RIIC" peripheral="RIIC8"/>
+            <assign group="GTM" peripheral="GTM2"/>
+            <assign peripheral="ICU.IRQ19"/>
+            <assign peripheral="ICU.IRQ222"/>
+            <assign peripheral="ICU.IRQ223"/>
+            <assign peripheral="ICU.IRQ224"/>
+            <assign peripheral="ICU.IRQ225"/>
+            <assign peripheral="ICU.IRQ226"/>
+            <assign peripheral="ICU.IRQ227"/>
+            <assign peripheral="ICU.IRQ293"/>
+            <assign peripheral="ICU.IRQ353"/>
+            <assign peripheral="ICU.IRQ354"/>
+        </zone>
+    </zones>
+</azone>
