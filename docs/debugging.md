@@ -78,6 +78,78 @@ This is the location to inspect after a flight or bench test.
 
 ---
 
+---
+
+## Verify CR8 is Running (OpenAMP health check)
+
+Before debugging higher-level issues (no MAVLink, agent fails), confirm CR8 actually
+initialised by inspecting the resource table it writes at boot.
+
+### Check the resource table
+
+The resource table lives at `0x42f00000` (UIO device `uio4 = rsctbl@42f00000`).
+CR8 writes a valid header there during `openamp_init`. All-`0xFF` values mean CR8
+never ran or crashed before OpenAMP init.
+
+UIO devices are mmap-only — `dd`/`cat` return empty. Use the agent log instead:
+
+```bash
+# If running as a systemd service:
+journalctl -u custom_xrce_agent.service -b --no-pager \
+  | grep -E '(NEW CR8 SESSION|Failed to intialize|Failed to create remoteproc)'
+```
+
+**CR8 running:**
+```
+[RPC][SESSION] *** NEW CR8 SESSION ***
+```
+
+**CR8 not running:**
+```
+[11938] Failed to intialize remoteproc
+[11938] Failed to create remoteproc device.
+```
+
+If you ran the agent manually (not via systemd), look for the same strings in the
+terminal output. The agent polls the resource table via mmap; "Failed to initialize
+remoteproc" always means CR8 never wrote a valid header to `0x42f00000`.
+
+To read the raw resource table bytes (requires stopping the agent first so it releases
+the UIO fd):
+
+```bash
+systemctl stop custom_xrce_agent.service
+python3 -c "
+import mmap, os, struct
+fd = os.open('/dev/uio4', os.O_RDWR | os.O_SYNC)
+mm = mmap.mmap(fd, 64, mmap.MAP_SHARED)
+data = bytes(mm[:16]); mm.close(); os.close(fd)
+print(' '.join(hex(struct.unpack('<I', data[i:i+4])[0]) for i in range(0, 16, 4)))
+"
+systemctl start custom_xrce_agent.service
+```
+
+**Valid resource table:** `0x1 0x2 0x0 0x0` (version=1, num_resources=2)
+
+**Uninitialised SDRAM:** `0xfffbffff 0xfbdfffbf 0xffffffff 0xffffffff`
+
+### Check UIO device exists
+
+```bash
+for u in /sys/class/uio/uio*; do echo "$u: $(cat $u/name)"; done
+# Must include: uio4: rsctbl@42f00000
+# If missing, the DTB does not have the required UIO nodes — copy the
+# disabled DTB from the repo root (see SETUP.md Step 1).
+```
+
+### Timing note
+
+CR8 firmware has a ~30-second delay before OpenAMP init when booting from U-Boot
+(not J-Link). Wait at least 30 s after the Linux login prompt before checking the
+resource table or starting the agent.
+
+---
+
 ## Related Files
 
 - [README.md](../README.md)

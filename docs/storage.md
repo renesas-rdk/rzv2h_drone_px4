@@ -46,12 +46,19 @@ PX4 reads persistent files from `/drone-data/cr8_data/`.
 
 Common files are:
 
-- `/drone-data/cr8_data/params` — saved PX4 parameters
+- `/drone-data/cr8_data/params` — saved PX4 parameters (BSON format, created automatically by PX4 on first successful boot — **do not pre-create this file**)
 - `/drone-data/cr8_data/etc/config.txt` — optional parameter overrides
 - `/drone-data/cr8_data/etc/extras.txt` — optional extra startup commands
 - `/drone-data/cr8_data/log/` — flight log output
 
 If you want to reset runtime state, remove only the specific file or directory you no longer need.
+
+**`/drone-data` must be in `/etc/fstab`** for the partition to mount automatically on
+every boot. The Yocto image includes this entry; if you installed a custom rootfs you
+need to add it manually:
+```
+/dev/mmcblk0p3  /drone-data  ext4  defaults,noatime,commit=5  0 2
+```
 
 ---
 

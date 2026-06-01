@@ -121,7 +121,7 @@ cd rzv2h_drone_px4
 ### 3. Build CA55 stack
 
 ```bash
-cd ca55_stack && ./compile.sh build
+cd ca55_stack && ./compile.sh agent
 # Output: xrce_dds_agent/src/build/CustomXRCEAgent
 ```
 

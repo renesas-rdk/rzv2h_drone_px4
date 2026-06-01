@@ -20,26 +20,31 @@ Quick guide to set up and deploy firmware on Renesas RZ/V2H. For hardware pinout
 ### 2. Clone & Build
 
 ```bash
-git clone https://github.com/Renesas-SST/rzv2h_px4_freertos.git
-cd rzv2h_px4_freertos
+git clone https://github.com/renesas-rdk/rzv2h_drone_px4.git
+cd rzv2h_drone_px4
 git submodule update --init --recursive
 
 export TOOLCHAIN_BASE_PATH="/opt/toolchains/gcc_arm/13_3-Rel1"
 ./compile.sh build
 
 # CA55 XRCE-DDS Agent (Linux side) — optional if Poky SDK unavailable
-cd uXRCE_DDS_Agent && ./compile.sh build
+cd ca55_stack && ./compile.sh agent
 ```
 
 **Outputs:**
 - `Debug/rzv2h_px4_freertos_itcm.bin`, `Debug/rzv2h_px4_freertos_sdram.bin` — CR8 firmware
-- `uXRCE_DDS_Agent/src/build/CustomXRCEAgent` — CA55 agent
+- `ca55_stack/xrce_dds_agent/src/build/CustomXRCEAgent` — CA55 agent
 
 ### 3. Configure RDK: DTB + U-Boot
 
 **Step 1: Copy custom DTB to RDK**
 
-Disables peripherals controlled by CR8 (SPI, GPT/PWM, UART, I2C, CANFD):
+This DTB disables SPI, GPT/PWM, UART, I2C, and CANFD on the Linux side so CR8 can
+exclusively control these peripherals. **Using the stock RDK DTB causes Linux to claim
+UART5/SPI/I2C and conflict with CR8 firmware — the board will boot but CR8 will not
+initialise correctly.**
+
+Run from the repo root (the `.dtb` file is checked in at the root):
 
 ```bash
 scp r9a09g057h4-rdk-ver1-disabled-spi-gpt-serial-i2c-canfd.dtb \
@@ -51,9 +56,16 @@ scp r9a09g057h4-rdk-ver1-disabled-spi-gpt-serial-i2c-canfd.dtb \
 Set bootargs:
 - Add `mmc rescan` + retry to improve cold-boot stability after power unplug/replug.
 - Load kernel/DTB via `kernel_addr_r` and `fdt_addr_r` to avoid overlap and unstable relocation behavior.
+- `fdt_high` and `initrd_high` set to `0xffffffffffffffff` to prevent U-Boot from
+  relocating the FDT. Without these, U-Boot may produce `Overlap found` warnings and
+  misprocess reserved-memory regions required by OpenAMP.
 - Fail fast if `run px4` fails, so Linux is not booted with CR8 firmware load errors.
 - `panic=1` — the yocto 6.10 kernel has `CONFIG_PROVE_LOCKING=y` (lockdep debug feature) that causes a deterministic NULL-ptr panic in `mm_core_init` on cold power-on due to uninitialized DRAM state. With `panic=1` the kernel auto-reboots 1 s after any panic, self-healing in ≤3 boot cycles. Root fix: rebuild kernel with `CONFIG_PROVE_LOCKING=n` (see Troubleshooting).
 - `usbcore.autosuspend=-1` — disables USB auto-suspend globally, preventing mid-flight USB camera disconnects.
+
+**Note:** `${ocaaddr}`, `${ocabin}`, `${codaddr}`, `${codbin}` referenced in `sd0load`
+are pre-set in factory U-Boot environment (OpenCV accelerator and codec blobs). Do not
+overwrite or clear them.
 ```bash
 setenv bootargs 'rw rootwait earlycon root=/dev/mmcblk0p2 clk-ignore-unused panic=1 usbcore.autosuspend=-1'
 setenv bootdelay 1
@@ -105,15 +117,23 @@ reset
 
 ```bash
 # Create directories on RDK (first-time only)
-ssh root@<RDK_IP> "mkdir -p /boot/cr8_data /drone-data/cr8_data/etc"
+ssh root@<RDK_IP> "mkdir -p /boot/cr8_data /drone-data/cr8_data/etc /drone-data/cr8_data/log"
+
+# Add drone-data partition to fstab so it auto-mounts on every boot
+ssh root@<RDK_IP> "echo '/dev/mmcblk0p3  /drone-data  ext4  defaults,noatime,commit=5  0 2' >> /etc/fstab"
 
 # Deploy CR8 firmware binaries to SD p2
 scp Debug/rzv2h_px4_freertos_itcm.bin root@<RDK_IP>:/boot/cr8_data/
 scp Debug/rzv2h_px4_freertos_sdram.bin root@<RDK_IP>:/boot/cr8_data/
 
 # Deploy CA55 agent (if built)
-scp uXRCE_DDS_Agent/src/build/CustomXRCEAgent root@<RDK_IP>:/usr/bin/
+cd ca55_stack/xrce_dds_agent && ./compile_agent.sh deploy-ca55
 ```
+
+**Do not create `/drone-data/cr8_data/params` manually.** PX4 creates this file
+automatically on first successful boot. Pre-creating it as an empty file will cause
+U-Boot to fail loading it silently, which is harmless, but an empty file blocks PX4
+from writing its parameter set on startup.
 
 **Reboot** — board will now auto-start CR8 PX4 and CA55 Linux.
 
