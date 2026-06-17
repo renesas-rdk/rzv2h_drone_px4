@@ -23,9 +23,12 @@
 #include "kernel.h"
 #endif
 
+/* gettid() was added to glibc 2.30 (unistd.h); provide a fallback for older sysroots. */
+#if !defined(__GLIBC__) || (__GLIBC__ < 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ < 30)
 static inline pid_t gettid(void) {
     return syscall(SYS_gettid);
 }
+#endif
 // Macros for printf
 #ifdef __linux__
 

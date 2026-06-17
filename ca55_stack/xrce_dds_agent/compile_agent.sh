@@ -14,6 +14,14 @@ BUILD_DIR="$AGENT_DIR/src/build"
 MICRO_XRCE_BUILD_DIR="$AGENT_DIR/Micro-XRCE-DDS-Agent/build"
 MICRO_XRCE_TEMP_INSTALL_DIR="$MICRO_XRCE_BUILD_DIR/temp_install"
 
+# Docker build constants (used by the docker-build subcommand)
+DOCKER_IMAGE="ghcr.io/renesas-rdk/rzv2h_ubuntu_xbuild:latest"
+PROJECT_ROOT="$(cd "${AGENT_DIR}/../.." && pwd)"
+CONTAINER_PROJECT="/workspace/project"
+CONTAINER_AGENT="${CONTAINER_PROJECT}/ca55_stack/xrce_dds_agent"
+CONTAINER_TVM="${CONTAINER_PROJECT}/rzv_drp-ai_tvm"
+SYSROOT_DEV_PKGS="libglib2.0-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libturbojpeg0-dev libjpeg-turbo8-dev"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -155,20 +163,67 @@ copy_dependencies() {
         copy_file_to_target "$lib" "$RZV_TARGET_LIB_DIR"
     done
 }
-# Setup Poky environment
+# Setup cross-compilation environment. Toolchain is selected by an EXPLICIT, fail-closed
+# selector so a stray CC/CXX in the shell can never silently hijack a Poky build:
+#
+#   RZV2H_AGENT_TOOLCHAIN_MODE = auto (default) | poky | docker
+#     docker : require CC/CXX/SDKTARGETSYSROOT, do NOT source Poky, pass empty Poky downstream.
+#              (Docker image: CC=aarch64-linux-gnu-gcc, SDKTARGETSYSROOT=/opt/arm64_sysroot)
+#     poky   : require a readable Poky env script (default path if unset); DIE if missing.
+#     auto   : docker iff POKY path is empty AND CC/CXX/SDKTARGETSYSROOT are all set;
+#              otherwise behave as poky (and DIE loudly if the Poky path is not a file).
 setup_poky_environment() {
-    log_step "Setting up Poky cross-compilation environment..."
-    # If not provided, default to the commonly used Poky env script path.
+    log_step "Setting up cross-compilation environment..."
+    local mode="${RZV2H_AGENT_TOOLCHAIN_MODE:-auto}"
+
+    # Decide whether to use the Docker/custom cross toolchain.
+    local want_docker=0
+    case "$mode" in
+        docker) want_docker=1 ;;
+        poky)   want_docker=0 ;;
+        auto)
+            if [ -z "${POKY_ENVIRONMENT_SETUP:-}" ] \
+               && [ -n "${CC:-}" ] && [ -n "${CXX:-}" ] && [ -n "${SDKTARGETSYSROOT:-}" ]; then
+                want_docker=1
+            fi
+            ;;
+        *)
+            log_error "✗ Invalid RZV2H_AGENT_TOOLCHAIN_MODE='$mode' (use auto|poky|docker)"
+            return 1
+            ;;
+    esac
+
+    if [ "$want_docker" = "1" ]; then
+        # Docker/custom mode — REQUIRE the full cross toolchain env (fail-closed).
+        local missing=""
+        [ -z "${CC:-}" ]              && missing="$missing CC"
+        [ -z "${CXX:-}" ]             && missing="$missing CXX"
+        [ -z "${SDKTARGETSYSROOT:-}" ] && missing="$missing SDKTARGETSYSROOT"
+        if [ -n "$missing" ]; then
+            log_error "✗ docker toolchain mode requires:$missing"
+            log_error "  e.g. CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ SDKTARGETSYSROOT=/opt/arm64_sysroot"
+            return 1
+        fi
+        log_info "✓ Toolchain mode: docker (CC=${CC%%[[:space:]]*}, SDKTARGETSYSROOT=$SDKTARGETSYSROOT)"
+        POKY_ENVIRONMENT_SETUP=""  # prevent cross.cmake from trying to source Poky
+        return 0
+    fi
+
+    # Poky mode — default the path if unset, then DIE if it is not a readable file.
+    # Do NOT fall back to Docker here: an intended Poky build must fail visibly.
     if [ -z "${POKY_ENVIRONMENT_SETUP:-}" ]; then
         POKY_ENVIRONMENT_SETUP="/opt/toolchains/poky/3.1.31/environment-setup-aarch64-poky-linux"
         log_warn "POKY_ENVIRONMENT_SETUP not set; defaulting to $POKY_ENVIRONMENT_SETUP"
     fi
-
     if [ ! -f "$POKY_ENVIRONMENT_SETUP" ]; then
         log_error "✗ Poky environment script not found at $POKY_ENVIRONMENT_SETUP"
+        log_error "  Install the Poky SDK, or build with the Docker toolchain:"
+        log_error "  RZV2H_AGENT_TOOLCHAIN_MODE=docker CC=aarch64-linux-gnu-gcc \\"
+        log_error "    CXX=aarch64-linux-gnu-g++ SDKTARGETSYSROOT=/opt/arm64_sysroot $0 build"
+        log_error "  (see docs/SETUP.md — CA55 Agent Build)"
         return 1
     fi
-    log_info "✓ Poky environment script found"
+    log_info "✓ Toolchain mode: poky ($POKY_ENVIRONMENT_SETUP)"
 
     # Temporarily clear LD_LIBRARY_PATH while sourcing the Poky env to avoid
     # SDK warnings or loader conflicts. Restore it afterwards.
@@ -187,6 +242,117 @@ setup_poky_environment() {
         unset OLD_LD_LIBRARY_PATH _POKY_UNSET_LD
         log_info "Restored previous LD_LIBRARY_PATH"
     fi
+}
+
+# Build inside the Renesas cross-build Docker image.
+# Reads flag globals set by the docker-build case arm:
+#   PULL_IMAGE, CLEAN_BUILD, INSTALL_DEPS, DO_UPDATE, ALLOW_DIRTY, ALLOW_PIN_MISMATCH
+do_docker_build() {
+    local AI_CAMERA="${ENABLE_AI_CAMERA:-OFF}"
+
+    # ── Optional refresh ──────────────────────────────────────────────────
+    if [ "${DO_UPDATE:-0}" = "1" ]; then
+        log_info "Updating repo (git pull + submodule update)..."
+        git -C "${PROJECT_ROOT}" pull --ff-only
+        git -C "${PROJECT_ROOT}" submodule update --init --recursive
+    fi
+
+    # ── Reproducibility guards ────────────────────────────────────────────
+    local HEAD_SHA
+    HEAD_SHA="$(git -C "${PROJECT_ROOT}" rev-parse --short HEAD 2>/dev/null || echo '?')"
+    log_info "Repo HEAD : ${HEAD_SHA}"
+    local SUBMOD_LINE
+    SUBMOD_LINE="$(git -C "${PROJECT_ROOT}" submodule status -- ca55_stack/xrce_dds_agent/Micro-XRCE-DDS-Agent 2>/dev/null || true)"
+    [ -n "${SUBMOD_LINE}" ] && log_info "XRCE pin  :${SUBMOD_LINE}"
+
+    if [ "${ALLOW_DIRTY:-0}" != "1" ]; then
+        if [ -n "$(git -C "${PROJECT_ROOT}" status --porcelain 2>/dev/null)" ]; then
+            log_error "Working tree is dirty — build is not reproducible."
+            log_error "  Commit/stash changes, or pass --allow-dirty (ALLOW_DIRTY=1) to override."
+            return 1
+        fi
+    fi
+
+    if [ "${ALLOW_PIN_MISMATCH:-0}" != "1" ]; then
+        if printf '%s' "${SUBMOD_LINE}" | grep -q '^+'; then
+            log_error "Micro-XRCE submodule pin drifted from the superproject."
+            log_error "  Run with --update, or pass --allow-pin-mismatch (ALLOW_PIN_MISMATCH=1)."
+            return 1
+        fi
+    fi
+
+    # ── Image ─────────────────────────────────────────────────────────────
+    if [ "${PULL_IMAGE:-0}" = "1" ] || ! docker image inspect "${DOCKER_IMAGE}" &>/dev/null; then
+        log_info "Pulling cross-build image (one-time, ~10 GB)..."
+        docker pull "${DOCKER_IMAGE}"
+    fi
+
+    if [ "${CLEAN_BUILD:-0}" = "1" ]; then
+        log_info "Cleaning build directories..."
+        rm -rf "${AGENT_DIR}/src/build" "${AGENT_DIR}/Micro-XRCE-DDS-Agent/build"
+    fi
+
+    # ── Docker run arguments ──────────────────────────────────────────────
+    local DOCKER_ARGS=(
+        --rm
+        -v "${PROJECT_ROOT}:${CONTAINER_PROJECT}"
+        -e RZV2H_AGENT_TOOLCHAIN_MODE=docker
+        -e CC=aarch64-linux-gnu-gcc
+        -e CXX=aarch64-linux-gnu-g++
+        -e SDKTARGETSYSROOT=/opt/arm64_sysroot
+        -e "ENABLE_AI_CAMERA=${AI_CAMERA}"
+    )
+
+    local PRE_BUILD=""
+
+    if [ "${AI_CAMERA}" = "ON" ]; then
+        # Locate the real DRP-AI TVM tree (symlink may point to another machine's path).
+        local TVM_HOST="${RZV_DRP_TVM_DIR:-}"
+        if [ -z "${TVM_HOST}" ]; then
+            if [ -d "${PROJECT_ROOT}/rzv_drp-ai_tvm/obj" ]; then
+                TVM_HOST="$(cd "${PROJECT_ROOT}/rzv_drp-ai_tvm" && pwd -P)"
+            fi
+        fi
+        if [ -z "${TVM_HOST}" ] || [ ! -d "${TVM_HOST}/obj/build_runtime/v2h/lib" ]; then
+            log_error "AI build needs the DRP-AI TVM runtime, but it was not found."
+            log_error "  Set RZV_DRP_TVM_DIR=/path/to/rzv_drp-ai_tvm (must contain"
+            log_error "  obj/build_runtime/v2h/lib with the pre-built V2H runtime libs)."
+            return 1
+        fi
+        log_info "DRP-AI TVM: ${TVM_HOST}"
+        DOCKER_ARGS+=(-v "${TVM_HOST}:${CONTAINER_TVM}:ro")
+        DOCKER_ARGS+=(--privileged)
+
+        if [ "${INSTALL_DEPS:-1}" = "1" ]; then
+            if [ ! -e /proc/sys/fs/binfmt_misc/qemu-aarch64 ]; then
+                log_info "Registering qemu-aarch64 binfmt handler on host (one-time)..."
+                docker run --privileged --rm tonistiigi/binfmt --install arm64 >/dev/null
+            fi
+            PRE_BUILD="
+            echo '[INFO]  Installing missing ARM64 sysroot dev packages...'
+            ( cd /home/ubuntu/toolchains && \
+              ./arm64-chroot.sh bash -c 'apt-get update -qq >/dev/null 2>&1; apt-get install -y ${SYSROOT_DEV_PKGS}' )
+            "
+        else
+            log_warn "--no-deps: skipping sysroot dev-pkg install (assumes already present)"
+        fi
+    fi
+
+    log_info "Building CustomXRCEAgent inside Docker..."
+    log_info "  Image     : ${DOCKER_IMAGE}"
+    log_info "  Project   : ${PROJECT_ROOT}"
+    log_info "  AI camera : ${AI_CAMERA}"
+
+    docker run "${DOCKER_ARGS[@]}" "${DOCKER_IMAGE}" bash -c "
+        set -e
+        ${PRE_BUILD}
+        cd ${CONTAINER_AGENT}
+        git config --global --add safe.directory ${CONTAINER_PROJECT} 2>/dev/null || true
+        git config --global --add safe.directory ${CONTAINER_AGENT}/Micro-XRCE-DDS-Agent 2>/dev/null || true
+        bash compile_agent.sh build
+    "
+
+    log_info "Build complete → ${AGENT_DIR}/src/build/CustomXRCEAgent"
 }
 
 # Check and initialize submodule
@@ -227,9 +393,18 @@ prebuild_fastcdr() {
     fi
 
     log_step "Pre-building fastcdr with system cmake..."
-    local CC_COMPILER="/opt/toolchains/poky/3.1.31/sysroots/x86_64-pokysdk-linux/usr/bin/aarch64-poky-linux/aarch64-poky-linux-gcc"
-    local CXX_COMPILER="/opt/toolchains/poky/3.1.31/sysroots/x86_64-pokysdk-linux/usr/bin/aarch64-poky-linux/aarch64-poky-linux-g++"
-    local SYSROOT="/opt/toolchains/poky/3.1.31/sysroots/aarch64-poky-linux"
+    # Use CC/CXX from env (set by Poky source or Docker env vars).
+    # Strip flags — we need just the compiler binary path for -DCMAKE_C_COMPILER.
+    local CC_COMPILER="${CC%%[[:space:]]*}"
+    local CXX_COMPILER="${CXX%%[[:space:]]*}"
+    local SYSROOT="${SDKTARGETSYSROOT:-}"
+    # Fall back to Poky defaults if env is empty (safety net for unusual call paths).
+    if [ -z "$CC_COMPILER" ]; then
+        CC_COMPILER="/opt/toolchains/poky/3.1.31/sysroots/x86_64-pokysdk-linux/usr/bin/aarch64-poky-linux/aarch64-poky-linux-gcc"
+        CXX_COMPILER="/opt/toolchains/poky/3.1.31/sysroots/x86_64-pokysdk-linux/usr/bin/aarch64-poky-linux/aarch64-poky-linux-g++"
+        SYSROOT="/opt/toolchains/poky/3.1.31/sysroots/aarch64-poky-linux"
+        log_warn "CC/CXX not set; falling back to Poky default paths for fastcdr pre-build"
+    fi
 
     local saved_path="$PATH"
     export PATH="/usr/local/bin:/usr/bin:$PATH"
@@ -573,11 +748,13 @@ show_status() {
         echo -e "Submodule: ${RED}✗ Not initialized${NC}"
     fi
     
-    # Check toolchain
+    # Check toolchain (Poky SDK or Docker/custom)
     if [ -f "/opt/toolchains/poky/3.1.31/environment-setup-aarch64-poky-linux" ]; then
-        echo -e "Toolchain: ${GREEN}✓ Poky aarch64 available${NC}"
+        echo -e "Toolchain: ${GREEN}✓ Poky aarch64 3.1.31 available${NC}"
+    elif [ -n "${CC:-}" ] && [ -n "${SDKTARGETSYSROOT:-}" ]; then
+        echo -e "Toolchain: ${GREEN}✓ Docker/custom (CC=${CC%%[[:space:]]*})${NC}"
     else
-        echo -e "Toolchain: ${RED}✗ Poky toolchain missing${NC}"
+        echo -e "Toolchain: ${RED}✗ Poky not found; set CC/CXX/SDKTARGETSYSROOT for Docker mode${NC}"
     fi
     
     # Check CMake
@@ -591,24 +768,33 @@ show_status() {
 
 # Show usage
 show_usage() {
-    echo "Usage: $0 {build|clean|status|deploy-ca55|copy-deps}"
+    echo "Usage: $0 {build|docker-build|clean|status|deploy-ca55|copy-deps}"
     echo ""
     echo "Commands:"
-    echo "  build        - Build custom XRCE agent"
-    echo "  clean        - Clean build directory"
-    echo "  status       - Show build status"
-    echo "  deploy-ca55  - Deploy CustomXRCEAgent binary to the CA55 board (atomic replace + service restart)"
-    echo "  copy-deps    - Copy Micro-XRCE/openssl dependencies to the CA55 board"
+    echo "  build         - Build on the host toolchain (Poky SDK or RZV2H_AGENT_TOOLCHAIN_MODE=docker)"
+    echo "  docker-build  - Build inside the Renesas Docker image (auto-pulls image on first run)"
+    echo "                  Options: --pull --clean --no-deps --update --allow-dirty --allow-pin-mismatch"
+    echo "  clean         - Clean build directory"
+    echo "  status        - Show build status"
+    echo "  deploy-ca55   - Deploy CustomXRCEAgent binary to the CA55 board (atomic replace + service restart)"
+    echo "  copy-deps     - Copy Micro-XRCE/openssl dependencies to the CA55 board"
     echo ""
-    echo "Environment variables:"
-    echo "    POKY_ENVIRONMENT_SETUP   Required path to the Poky environment script"
-    echo "    RZV_TARGET_HOST          CA55 board host (default: \$RDK_IP or 192.168.1.150)"
-    echo "    RZV_TARGET_USER          CA55 SSH user (default: root)"
-    echo "    RZV_TARGET_BIN_DIR       Destination directory for the binary (default: /usr/bin)"
-    echo "    RZV_TARGET_LIB_DIR       Destination directory for dependencies (default: /lib/aarch64-linux-gnu)"
-    echo "    RZV_AGENT_AUTO_DEPLOY     Set to ON to auto-copy the binary after build (default: OFF)"
-    echo "    RZV_AGENT_SERVICE_NAME    systemd service name to restart after copy (default: custom_xrce_agent)"
-    echo "    RZV_SSH_OPTIONS          Additional ssh/scp options (default: -o StrictHostKeyChecking=no)"
+    echo "Environment variables (build / docker-build):"
+    echo "    RZV2H_AGENT_TOOLCHAIN_MODE    auto (default) | poky | docker"
+    echo "    ENABLE_AI_CAMERA              ON/OFF — YOLOv8n DRP-AI + GStreamer (default: OFF)"
+    echo "    RZV_DRP_TVM_DIR               Override path to DRP-AI TVM tree (AI build)"
+    echo "    ALLOW_DIRTY                   1 = skip dirty-tree check in docker-build"
+    echo "    ALLOW_PIN_MISMATCH            1 = skip submodule pin-drift check in docker-build"
+    echo ""
+    echo "Environment variables (deploy):"
+    echo "    POKY_ENVIRONMENT_SETUP        Path to the Poky environment script"
+    echo "    RZV_TARGET_HOST               CA55 board host (default: \$RDK_IP or 192.168.1.150)"
+    echo "    RZV_TARGET_USER               CA55 SSH user (default: root)"
+    echo "    RZV_TARGET_BIN_DIR            Destination directory for the binary (default: /usr/bin)"
+    echo "    RZV_TARGET_LIB_DIR            Destination directory for dependencies (default: /lib/aarch64-linux-gnu)"
+    echo "    RZV_AGENT_AUTO_DEPLOY          Set to ON to auto-copy the binary after build (default: OFF)"
+    echo "    RZV_AGENT_SERVICE_NAME         systemd service name to restart after copy (default: custom_xrce_agent)"
+    echo "    RZV_SSH_OPTIONS               Additional ssh/scp options (default: -o StrictHostKeyChecking=no)"
 }
 
 # Main execution
@@ -618,6 +804,23 @@ case "$1" in
         check_submodule
         build_micro_xrce_agent_lib
         build_custom_agent
+        ;;
+    docker-build)
+        PULL_IMAGE=0; CLEAN_BUILD=0; INSTALL_DEPS=1; DO_UPDATE=0
+        ALLOW_DIRTY="${ALLOW_DIRTY:-0}"; ALLOW_PIN_MISMATCH="${ALLOW_PIN_MISMATCH:-0}"
+        shift || true
+        for arg in "$@"; do
+            case "$arg" in
+                --pull)               PULL_IMAGE=1 ;;
+                --clean)              CLEAN_BUILD=1 ;;
+                --no-deps)            INSTALL_DEPS=0 ;;
+                --update)             DO_UPDATE=1 ;;
+                --allow-dirty)        ALLOW_DIRTY=1 ;;
+                --allow-pin-mismatch) ALLOW_PIN_MISMATCH=1 ;;
+                *) log_error "Unknown option: $arg"; show_usage; exit 1 ;;
+            esac
+        done
+        do_docker_build
         ;;
     clean)
         clean_build

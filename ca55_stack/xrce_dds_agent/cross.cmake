@@ -98,5 +98,7 @@ set(CMAKE_CXX_FLAGS_INIT "${ENV_CXX_FLAGS} $ENV{CXXFLAGS} $ENV{CPPFLAGS} -Wno-ma
 set(CMAKE_EXE_LINKER_FLAGS_INIT "$ENV{LDFLAGS}")
 
 # Include directories and library directories from the sysroot
+# Poky SDK uses lib64; Docker/Ubuntu sysroot uses lib/aarch64-linux-gnu
 include_directories("$ENV{SDKTARGETSYSROOT}/usr/include")
 link_directories("$ENV{SDKTARGETSYSROOT}/usr/lib64")
+link_directories("$ENV{SDKTARGETSYSROOT}/usr/lib/aarch64-linux-gnu")

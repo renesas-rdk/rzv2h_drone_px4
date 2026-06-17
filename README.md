@@ -69,13 +69,12 @@ See [docs/HARDWARE.md](docs/HARDWARE.md) for pinout and wiring.
 | Tool | Version |
 |------|---------|
 | ARM GNU Toolchain (CR8) | 13.3.Rel1 (`arm-none-eabi`) |
-| Poky SDK (CA55) | 3.1.31 (`aarch64-poky-linux`) |
+| Docker (CA55 agent) | ≥ 20.x (`ghcr.io/renesas-rdk/rzv2h_ubuntu_xbuild`) |
 | CMake | ≥ 3.16 |
 | Ninja | any |
 
 ```bash
 export TOOLCHAIN_BASE_PATH="/opt/toolchains/gcc_arm/13_3-Rel1"
-export POKY_SDK_PATH="/opt/toolchains/poky/3.1.31"
 ```
 
 ---
@@ -121,7 +120,8 @@ cd rzv2h_drone_px4
 ### 3. Build CA55 stack
 
 ```bash
-cd ca55_stack && ./compile.sh agent
+cd ca55_stack/xrce_dds_agent
+./compile_agent.sh docker-build   # pulls Docker image on first run (~10 GB), then builds
 # Output: xrce_dds_agent/src/build/CustomXRCEAgent
 ```
 

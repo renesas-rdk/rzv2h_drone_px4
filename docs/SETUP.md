@@ -115,12 +115,46 @@ reset
 
 ### 4. Deploy Firmware
 
+> **First-time only — create the data partition (p3) before this step.** The stock
+> Yocto image ships only p1 (boot) + p2 (rootfs); `/dev/mmcblk0p3` does **not** exist
+> yet. If you add the fstab line without creating p3 first, the next boot fails trying to
+> mount the missing partition (it drops to an emergency shell).
+>
+> Run this **portable** snippet once on the board — it auto-detects the boot disk
+> (`mmcblk0` / `sda` / `nvme0n1`, MBR or GPT), is idempotent (safe to re-run), formats p3,
+> writes the fstab entry, and mounts it. It also covers the fstab step below, so you can
+> skip that one:
+> ```bash
+> ssh root@<RDK_IP> '
+>   set -e
+>   # 1) Detect the disk holding the running rootfs (no hard-coded device name)
+>   rootpart=$(findmnt -no SOURCE /)
+>   disk=/dev/$(lsblk -no PKNAME "$rootpart")
+>   # 2) Create p3 in the free space after p2 — only if it does not exist yet
+>   if ! { [ -b "${disk}p3" ] || [ -b "${disk}3" ]; }; then
+>       echo ",,L" | sfdisk --append "$disk"          # default start=after p2, size=rest
+>       partprobe "$disk"; udevadm settle 2>/dev/null || true; sync
+>   fi
+>   # 3) Resolve p3 node and format ext4 only if it has no filesystem yet
+>   for d in "${disk}p3" "${disk}3"; do [ -b "$d" ] && p3="$d"; done
+>   blkid "$p3" >/dev/null 2>&1 || mkfs.ext4 -F -L drone-data "$p3"
+>   # 4) Persist mount by LABEL + nofail (a missing card can never block boot)
+>   mkdir -p /drone-data
+>   grep -q " /drone-data " /etc/fstab || \
+>     echo "LABEL=drone-data  /drone-data  ext4  defaults,noatime,nofail,commit=5  0 2" >> /etc/fstab
+>   mount /drone-data
+>   lsblk -f "$disk"'
+> ```
+> See [storage.md](storage.md) for the full partition layout.
+
 ```bash
 # Create directories on RDK (first-time only)
 ssh root@<RDK_IP> "mkdir -p /boot/cr8_data /drone-data/cr8_data/etc /drone-data/cr8_data/log"
 
-# Add drone-data partition to fstab so it auto-mounts on every boot
-ssh root@<RDK_IP> "echo '/dev/mmcblk0p3  /drone-data  ext4  defaults,noatime,commit=5  0 2' >> /etc/fstab"
+# fstab — only needed if you did NOT use the portable snippet above (which already wrote it).
+# Mount by LABEL (device-name independent) and keep 'nofail' so a missing p3 never blocks boot.
+ssh root@<RDK_IP> "grep -q ' /drone-data ' /etc/fstab || \
+  echo 'LABEL=drone-data  /drone-data  ext4  defaults,noatime,nofail,commit=5  0 2' >> /etc/fstab"
 
 # Deploy CR8 firmware binaries to SD p2
 scp Debug/rzv2h_px4_freertos_itcm.bin root@<RDK_IP>:/boot/cr8_data/
@@ -198,9 +232,65 @@ sudo tar -xf arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi.tar.xz \
 /opt/toolchains/gcc_arm/13_3-Rel1/bin/arm-none-eabi-gcc --version
 ```
 
-**Poky SDK 3.1.31** (for CA55 agent build):
-- Install to `/opt/toolchains/poky/3.1.31`
-- Typically provided by Renesas or built from Yocto
+**CA55 agent build (CustomXRCEAgent):** built with the Docker image —
+no Poky SDK needed. See [CA55 Agent Build](#ca55-agent-build) below.
+
+### CA55 Agent Build
+
+Two supported toolchains — pick whichever fits your environment:
+
+#### Option A — Docker (recommended, no SDK install needed)
+
+Builds inside the cross-build Docker image which ships the cross-compiler
+(`aarch64-linux-gnu`), ARM64 sysroot, and all OpenAMP/libmetal headers.
+
+```bash
+cd ca55_stack/xrce_dds_agent
+./compile_agent.sh docker-build          # auto-pulls image on first run (~10 GB)
+
+# Full build with AI camera (DRP-AI + GStreamer):
+ENABLE_AI_CAMERA=ON ./compile_agent.sh docker-build
+```
+
+Output: `ca55_stack/xrce_dds_agent/src/build/CustomXRCEAgent`
+(ELF aarch64, interpreter `/lib/ld-linux-aarch64.so.1`).
+
+Useful flags: `--pull` (refresh image), `--clean` (wipe build dirs), `--update`
+(git pull + submodule), `--no-deps` (skip sysroot dev-pkg install for the AI build).
+
+**Deploy preflight (Ubuntu→Yocto):** because the binary is built against an Ubuntu 24.04
+sysroot, run the closure check before deploying to a board so an ABI/lib gap fails loudly
+instead of at runtime:
+
+```bash
+tools/check-agent-runtime-closure.sh root@<RDK_IP>          # verify only
+tools/check-agent-runtime-closure.sh root@<RDK_IP> --stage  # stage missing non-system libs
+```
+
+#### Option B — Poky SDK 3.1.31
+
+**Important:** the SDK must be built from `core-image-weston` (or any image that includes
+the OpenAMP/libmetal layer). A minimal-image SDK omits those headers and the build fails
+with `fatal error: metal/sys.h: No such file or directory`.
+
+The installer always contains `core-image-weston`; the board-variant and VLP version parts
+vary, so match it with a glob (e.g. `poky-glibc-x86_64-core-image-weston-aarch64-rzv2h-*-toolchain-3.1.31.sh`).
+To build it from Yocto yourself, follow Renesas' guide
+[How to build RZ/V2H AI SDK Source Code](https://renesas-rz.github.io/rzv_ai_sdk/5.00/howto_build_aisdk_v2h.html)
+— run `MACHINE=rzv2h-evk-ver1 bitbake core-image-weston -c populate_sdk`; the `.sh` installer
+lands in `build/tmp/deploy/sdk/`.
+
+```bash
+# Install SDK (one-time) — resolve the installer by glob so the exact name doesn't matter:
+SDK=$(ls poky-glibc-x86_64-core-image-weston-aarch64-rzv2h-*-toolchain-3.1.31.sh)
+chmod +x "$SDK"
+./"$SDK" -d /opt/toolchains/poky/3.1.31 -y
+
+# Build:
+cd ca55_stack/xrce_dds_agent
+POKY_ENVIRONMENT_SETUP=/opt/toolchains/poky/3.1.31/environment-setup-aarch64-poky-linux \
+  ./compile_agent.sh build
+```
 
 ### Docker Build (Optional)
 

@@ -18,11 +18,13 @@ Runs on Cortex-A55 (Yocto/Poky Linux), communicates with PX4 on CR8 via XRCE-DDS
 
 ## Prerequisites
 
-- Poky SDK 3.1.31 (`aarch64-poky-linux`):
-  ```bash
-  source /opt/toolchains/poky/3.1.31/environment-setup-aarch64-poky-linux
-  ```
-- ROS 2 Humble workspace sourced on the target board
+Two supported toolchains (see [SETUP.md](../docs/SETUP.md#ca55-agent-build) for full details):
+
+- **Option A (Docker):** `ghcr.io/renesas-rdk/rzv2h_ubuntu_xbuild:latest` — pulled automatically on first build
+- **Option B (Poky SDK):** Poky 3.1.31 built from `core-image-weston` (must include OpenAMP layer;
+  a minimal-image SDK is missing `metal/openamp` headers)
+
+- ROS 2 Jazzy workspace sourced on the target board
 
 ---
 
@@ -32,7 +34,7 @@ Runs on Cortex-A55 (Yocto/Poky Linux), communicates with PX4 on CR8 via XRCE-DDS
 
 ```bash
 cd xrce_dds_agent
-./compile_agent.sh build
+./compile_agent.sh docker-build
 # Output: src/build/CustomXRCEAgent
 ```
 
@@ -41,7 +43,7 @@ cd xrce_dds_agent
 Requires the DRP-AI TVM SDK symlink at `../rzv_drp-ai_tvm` — see [DRP-AI TVM SDK](#drp-ai-tvm-sdk) below.
 
 ```bash
-ENABLE_AI_CAMERA=ON ./compile_agent.sh build
+ENABLE_AI_CAMERA=ON ./compile_agent.sh docker-build
 ```
 
 ### ROS 2 Packages

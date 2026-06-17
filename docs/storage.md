@@ -53,11 +53,36 @@ Common files are:
 
 If you want to reset runtime state, remove only the specific file or directory you no longer need.
 
-**`/drone-data` must be in `/etc/fstab`** for the partition to mount automatically on
-every boot. The Yocto image includes this entry; if you installed a custom rootfs you
-need to add it manually:
+**`/drone-data` lives on partition 3 (p3), which you must create yourself.** The stock
+Yocto image ships only p1 (boot) + p2 (rootfs) — `/dev/mmcblk0p3` does **not** exist on a
+fresh card. Run this **portable** snippet once on the running board *before* mounting it.
+It auto-detects the boot disk (`mmcblk0` / `sda` / `nvme0n1`, MBR or GPT), is idempotent
+(safe to re-run), formats p3, writes the fstab entry, and mounts it:
+```bash
+set -e
+# 1) Detect the disk holding the running rootfs (no hard-coded device name)
+rootpart=$(findmnt -no SOURCE /)
+disk=/dev/$(lsblk -no PKNAME "$rootpart")
+# 2) Create p3 in the free space after p2 — only if it does not exist yet
+if ! { [ -b "${disk}p3" ] || [ -b "${disk}3" ]; }; then
+    echo ',,L' | sfdisk --append "$disk"          # default start=after p2, size=rest
+    partprobe "$disk"; udevadm settle 2>/dev/null || true; sync
+fi
+# 3) Resolve p3 node and format ext4 only if it has no filesystem yet
+for d in "${disk}p3" "${disk}3"; do [ -b "$d" ] && p3="$d"; done
+blkid "$p3" >/dev/null 2>&1 || mkfs.ext4 -F -L drone-data "$p3"
+# 4) Persist mount by LABEL + nofail (a missing card can never block boot)
+mkdir -p /drone-data
+grep -q ' /drone-data ' /etc/fstab || \
+  echo 'LABEL=drone-data  /drone-data  ext4  defaults,noatime,nofail,commit=5  0 2' >> /etc/fstab
+mount /drone-data
 ```
-/dev/mmcblk0p3  /drone-data  ext4  defaults,noatime,commit=5  0 2
+
+The resulting fstab line mounts **by LABEL** (not `/dev/mmcblk0p3`) so it survives
+device-name changes across boards/readers, and `nofail` guarantees a missing/absent p3
+never blocks boot (otherwise the system drops to an emergency shell):
+```
+LABEL=drone-data  /drone-data  ext4  defaults,noatime,nofail,commit=5  0 2
 ```
 
 ---

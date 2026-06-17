@@ -146,11 +146,26 @@ if(ENABLE_AI_CAMERA)
     # ── GStreamer (H.264 HW encoder → QGC stream) ─────────────────────
     # Poky SDK puts GStreamer in sysroot/usr/lib64 — locate via pkg-config or
     # hardcoded sysroot-relative paths if cross-compiling without pkg-config.
+    # Sysroot lib layout differs by toolchain: Poky SDK uses usr/lib64; the Ubuntu/Docker
+    # ARM64 sysroot uses the multiarch usr/lib/aarch64-linux-gnu. Support both so the same
+    # CMakeLists builds under either toolchain.
     if(CMAKE_SYSROOT)
         set(GST_INC_DIR  "${CMAKE_SYSROOT}/usr/include/gstreamer-1.0")
         set(GLIB_INC_DIR "${CMAKE_SYSROOT}/usr/include/glib-2.0")
-        set(GLIB_CFG_DIR "${CMAKE_SYSROOT}/usr/lib64/glib-2.0/include")
-        set(GST_LIB_DIR  "${CMAKE_SYSROOT}/usr/lib64")
+        set(_GLIB_CFG_MULTIARCH "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/glib-2.0/include")
+        if(EXISTS "${_GLIB_CFG_MULTIARCH}/glibconfig.h")
+            set(GLIB_CFG_DIR "${_GLIB_CFG_MULTIARCH}")            # Ubuntu/Docker
+        else()
+            set(GLIB_CFG_DIR "${CMAKE_SYSROOT}/usr/lib64/glib-2.0/include")  # Poky
+        endif()
+        # Search both lib roots; -rpath-link lets the linker resolve transitive deps
+        # (e.g. gstreamer's own deps) without recording a runtime rpath.
+        set(GST_LIB_DIR
+            "${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu"
+            "${CMAKE_SYSROOT}/usr/lib64")
+        target_link_options(CustomXRCEAgent PRIVATE
+            "-Wl,-rpath-link,${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu"
+            "-Wl,-rpath-link,${CMAKE_SYSROOT}/usr/lib64")
     else()
         # Native build (on-board or x86 dev) — use system pkg-config paths
         find_package(PkgConfig REQUIRED)
