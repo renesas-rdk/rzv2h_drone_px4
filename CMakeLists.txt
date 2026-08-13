@@ -328,7 +328,6 @@ if(EXISTS ${PX4_DIR}/CMakeLists.txt)
         rzv/fsp/src/r_spi_b/r_spi_b.c
         rzv/fsp/src/r_sci_b_i2c/r_sci_b_i2c.c
         rzv/fsp/src/r_dmac_b/r_dmac_b.c
-        rzv/fsp/src/r_intc_tint/r_intc_tint.c
         rzv/fsp/src/bsp/mcu/all/bsp_address_convert.c
         rzv/fsp/src/bsp/mcu/all/bsp_clocks.c
         rzv/fsp/src/bsp/mcu/all/bsp_common.c
