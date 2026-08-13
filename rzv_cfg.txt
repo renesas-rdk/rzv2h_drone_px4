@@ -456,9 +456,9 @@ FSP Configuration
       P45 AM17 - - - - Disabled - - "CANFD5: CRXDP5; DMAC2: DREQ2; DMAC4: TEND4; GPT2: GTIOC2B; GPT2: GTIOC2BN; IRQ: IRQ13; RIIC6: SCL6; RSCI5: RXD5_MISO5_SCL5; SSIU1: SSI1_WS" - None - - 
       P46 AN17 GPT3_GTIOC3A - - - "Peripheral mode" - - "CANFD5: CTX5; DMAC2: DACK2; DMAC3: DREQ3; GPT3: GTIOC3A; GPT3: GTIOC3AN; IRQ: IRQ14; RIIC7: SDA7; RSCI5: CTS5N; RSCI5: DE5; RSCI5: SCK5; SSIU1: SSI1_SDATA" - None - - 
       P47 AU19 - - - - Disabled - - "CANFD5: CRX5; DMAC2: TEND2; DMAC4: DREQ4; GPT3: GTIOC3B; GPT3: GTIOC3BN; IRQ: IRQ15; RIIC7: SCL7; RSCI5: DE5; RSCI5: SS5_CTS5N_RTS5N; SSIU2: SSI2_SDATA" - None - - 
-      P50 AT20 RSCI0_TXD0_MOSI0_SDA0 - - - "Peripheral mode" - - "GPT8: GTIOC8A; GPT8: GTIOC8AN; IRQ: IRQ0; RSCI0: TXD0_MOSI0_SDA0" - IO - - 
+      P50 AT20 RSCI0_TXD0_MOSI0_SDA0 - - - "Peripheral mode" - - "GPT8: GTIOC8A; GPT8: GTIOC8AN; IRQ: IRQ0; RSCI0: TXD0_MOSI0_SDA0" - None - - 
       P51 AN21 RSCI0_RXD0_MISO0_SCL0 - - - "Peripheral mode" - - "GPT8: GTIOC8B; GPT8: GTIOC8BN; IRQ: IRQ1; RSCI0: RXD0_MISO0_SCL0" - None - - 
-      P52 AP22 - GPS_SAFETY_SWITCH - - Disabled - - "GPT10: GTIOC10A; GPT10: GTIOC10AN; IRQ: IRQ4; RSCI0: CTS0N; RSCI0: DE0; RSCI0: SCK0; RSCI1: TXD1_MOSI1_SDA1" "Using for GPS M10 SAFETY SWITCH" IO - - 
+      P52 AP22 - GPS_SAFETY_SWITCH X4 - Disabled - - "GPT10: GTIOC10A; GPT10: GTIOC10AN; IRQ: IRQ4; RSCI0: CTS0N; RSCI0: DE0; RSCI0: SCK0; RSCI1: TXD1_MOSI1_SDA1" "Using for GPS M10 SAFETY SWITCH" IO - - 
       P53 AU20 - - X4 - Disabled - - "GPT10: GTIOC10B; GPT10: GTIOC10BN; IRQ: IRQ5; RSCI0: DE0; RSCI0: SS0_CTS0N_RTS0N; RSCI1: RXD1_MISO1_SCL1" - IO - - 
       P54 AM20 - - - - Disabled - - "GPT12: GTIOC12A; GPT12: GTIOC12AN; IRQ: IRQ8; RSCI2: TXD2_MOSI2_SDA2" - None - - 
       P55 AR22 - - - - Disabled - - "GPT12: GTIOC12B; GPT12: GTIOC12BN; IRQ: IRQ9; RSCI2: RXD2_MISO2_SCL2" - None - - 
@@ -493,7 +493,7 @@ FSP Configuration
       P92 AN30 - - X4 - Disabled - - "IRQ: IRQ2; RSCI0: TXD0_MOSI0_SDA0; RSCI6: CTS6N; RSCI6: DE6; RSCI6: SCK6; RSPI0: RSPCKA" - IO - - 
       P93 AM30 - - X4 - Disabled - - "ADG: AUDIO_CLKB; IRQ: IRQ3; RSCI0: RXD0_MISO0_SCL0; RSCI6: DE6; RSCI6: SS6_CTS6N_RTS6N; RSPI0: SSLA0; SD0: SD0WP; SD1: SD1WP" - IO - - 
       P94 AM29 - - X4 - Disabled - - "ADG: AUDIO_CLKC; GPT4: GTIOC4A; GPT4: GTIOC4AN; GPT8: GTIOC8A; GPT8: GTIOC8AN; IRQ: IRQ4; RSCI7: TXD7_MOSI7_SDA7; RSPI0: SSLA1; SD0: SD0CD; SD1: SD1CD; SPDIF0: SPDIF0_OUT" - IO - - 
-      P95 AR30 - - - - Disabled - - "GPT4: GTIOC4B; GPT4: GTIOC4BN; GPT8: GTIOC8B; GPT8: GTIOC8BN; IRQ: IRQ5; RSCI7: RXD7_MISO7_SCL7; RSPI0: SSLA2; SPDIF0: SPDIF0_IN; SSIU0: SSI0_SCK; USB20: USB20_VBUSEN; USB30: USB30_VBUSEN" - None - - 
+      P95 AR30 - - X4 - Disabled - - "GPT4: GTIOC4B; GPT4: GTIOC4BN; GPT8: GTIOC8B; GPT8: GTIOC8BN; IRQ: IRQ5; RSCI7: RXD7_MISO7_SCL7; RSPI0: SSLA2; SPDIF0: SPDIF0_IN; SSIU0: SSI0_SCK; USB20: USB20_VBUSEN; USB30: USB30_VBUSEN" - IO - - 
       P96 AN31 - - X4 - Disabled - - "ADG: AUDIO_CLKOUT; GPT5: GTIOC5A; GPT5: GTIOC5AN; GPT9: GTIOC9A; GPT9: GTIOC9AN; IRQ: IRQ6; RSCI1: TXD1_MOSI1_SDA1; RSCI7: CTS7N; RSCI7: DE7; RSCI7: SCK7; RSPI0: SSLA3; SSIU0: SSI0_WS; USB20: USB20_OVRCURN; USB30: USB30_OVRCURN" - IO - - 
       P97 AN29 - GPS_BUZZER X4 - Disabled - - "ADC: ADTRG; ADG: AUDIO_CLKOUT; GPT5: GTIOC5B; GPT5: GTIOC5BN; GPT9: GTIOC9B; GPT9: GTIOC9BN; IRQ: IRQ7; RSCI1: RXD1_MISO1_SCL1; RSCI7: DE7; RSCI7: SS7_CTS7N_RTS7N; SSIU0: SSI0_SDATA" "Using for GPS M10 BUZZER" IO - - 
       PA0 AM28 - - - - Disabled - - "IRQ: IRQ8; SD0: SD0IOVS; SD1: SD1WP; SD2: SD2WP" - None - - 
@@ -1817,9 +1817,9 @@ FSP Configuration
       P45 AM17 - - - - Disabled - - "CANFD5: CRXDP5; DMAC2: DREQ2; DMAC4: TEND4; GPT2: GTIOC2B; GPT2: GTIOC2BN; IRQ: IRQ13; RIIC6: SCL6; RSCI5: RXD5_MISO5_SCL5; SSIU1: SSI1_WS" - None - - 
       P46 AN17 GPT3_GTIOC3A - - - "Peripheral mode" - - "CANFD5: CTX5; DMAC2: DACK2; DMAC3: DREQ3; GPT3: GTIOC3A; GPT3: GTIOC3AN; IRQ: IRQ14; RIIC7: SDA7; RSCI5: CTS5N; RSCI5: DE5; RSCI5: SCK5; SSIU1: SSI1_SDATA" - None - - 
       P47 AU19 - - - - Disabled - - "CANFD5: CRX5; DMAC2: TEND2; DMAC4: DREQ4; GPT3: GTIOC3B; GPT3: GTIOC3BN; IRQ: IRQ15; RIIC7: SCL7; RSCI5: DE5; RSCI5: SS5_CTS5N_RTS5N; SSIU2: SSI2_SDATA" - None - - 
-      P50 AT20 - - - - Disabled - - "GPT8: GTIOC8A; GPT8: GTIOC8AN; IRQ: IRQ0; RSCI0: TXD0_MOSI0_SDA0" - IO - - 
+      P50 AT20 - - - - Disabled - - "GPT8: GTIOC8A; GPT8: GTIOC8AN; IRQ: IRQ0; RSCI0: TXD0_MOSI0_SDA0" - None - - 
       P51 AN21 - - - - Disabled - - "GPT8: GTIOC8B; GPT8: GTIOC8BN; IRQ: IRQ1; RSCI0: RXD0_MISO0_SCL0" - None - - 
-      P52 AP22 - GPS_SAFETY_SWITCH - - Disabled - - "GPT10: GTIOC10A; GPT10: GTIOC10AN; IRQ: IRQ4; RSCI0: CTS0N; RSCI0: DE0; RSCI0: SCK0; RSCI1: TXD1_MOSI1_SDA1" "Using for GPS M10 SAFETY SWITCH" IO - - 
+      P52 AP22 - GPS_SAFETY_SWITCH X4 - Disabled - - "GPT10: GTIOC10A; GPT10: GTIOC10AN; IRQ: IRQ4; RSCI0: CTS0N; RSCI0: DE0; RSCI0: SCK0; RSCI1: TXD1_MOSI1_SDA1" "Using for GPS M10 SAFETY SWITCH" IO - - 
       P53 AU20 RSCI1_RXD1_MISO1_SCL1 - X4 - "Peripheral mode" - - "GPT10: GTIOC10B; GPT10: GTIOC10BN; IRQ: IRQ5; RSCI0: DE0; RSCI0: SS0_CTS0N_RTS0N; RSCI1: RXD1_MISO1_SCL1" - IO - - 
       P54 AM20 - - - - Disabled - - "GPT12: GTIOC12A; GPT12: GTIOC12AN; IRQ: IRQ8; RSCI2: TXD2_MOSI2_SDA2" - None - - 
       P55 AR22 - - - - Disabled - - "GPT12: GTIOC12B; GPT12: GTIOC12BN; IRQ: IRQ9; RSCI2: RXD2_MISO2_SCL2" - None - - 
@@ -1854,7 +1854,7 @@ FSP Configuration
       P92 AN30 RSPI0_RSPCKA - X6 - "Peripheral mode" - - "IRQ: IRQ2; RSCI0: TXD0_MOSI0_SDA0; RSCI6: CTS6N; RSCI6: DE6; RSCI6: SCK6; RSPI0: RSPCKA" - IO - - 
       P93 AM30 - - X4 - Disabled - - "ADG: AUDIO_CLKB; IRQ: IRQ3; RSCI0: RXD0_MISO0_SCL0; RSCI6: DE6; RSCI6: SS6_CTS6N_RTS6N; RSPI0: SSLA0; SD0: SD0WP; SD1: SD1WP" - IO - - 
       P94 AM29 - - X4 - Disabled - - "ADG: AUDIO_CLKC; GPT4: GTIOC4A; GPT4: GTIOC4AN; GPT8: GTIOC8A; GPT8: GTIOC8AN; IRQ: IRQ4; RSCI7: TXD7_MOSI7_SDA7; RSPI0: SSLA1; SD0: SD0CD; SD1: SD1CD; SPDIF0: SPDIF0_OUT" - IO - - 
-      P95 AR30 - - - - Disabled - - "GPT4: GTIOC4B; GPT4: GTIOC4BN; GPT8: GTIOC8B; GPT8: GTIOC8BN; IRQ: IRQ5; RSCI7: RXD7_MISO7_SCL7; RSPI0: SSLA2; SPDIF0: SPDIF0_IN; SSIU0: SSI0_SCK; USB20: USB20_VBUSEN; USB30: USB30_VBUSEN" - None - - 
+      P95 AR30 - - X4 - Disabled - - "GPT4: GTIOC4B; GPT4: GTIOC4BN; GPT8: GTIOC8B; GPT8: GTIOC8BN; IRQ: IRQ5; RSCI7: RXD7_MISO7_SCL7; RSPI0: SSLA2; SPDIF0: SPDIF0_IN; SSIU0: SSI0_SCK; USB20: USB20_VBUSEN; USB30: USB30_VBUSEN" - IO - - 
       P96 AN31 - - X4 - Disabled - - "ADG: AUDIO_CLKOUT; GPT5: GTIOC5A; GPT5: GTIOC5AN; GPT9: GTIOC9A; GPT9: GTIOC9AN; IRQ: IRQ6; RSCI1: TXD1_MOSI1_SDA1; RSCI7: CTS7N; RSCI7: DE7; RSCI7: SCK7; RSPI0: SSLA3; SSIU0: SSI0_WS; USB20: USB20_OVRCURN; USB30: USB30_OVRCURN" - IO - - 
       P97 AN29 - GPS_BUZZER X4 - Disabled - - "ADC: ADTRG; ADG: AUDIO_CLKOUT; GPT5: GTIOC5B; GPT5: GTIOC5BN; GPT9: GTIOC9B; GPT9: GTIOC9BN; IRQ: IRQ7; RSCI1: RXD1_MISO1_SCL1; RSCI7: DE7; RSCI7: SS7_CTS7N_RTS7N; SSIU0: SSI0_SDATA" "Using for GPS M10 BUZZER" IO - - 
       PA0 AM28 - - - - Disabled - - "IRQ: IRQ8; SD0: SD0IOVS; SD1: SD1WP; SD2: SD2WP" - None - - 
@@ -3178,9 +3178,9 @@ FSP Configuration
       P45 AM17 - - - - Disabled - - "CANFD5: CRXDP5; DMAC2: DREQ2; DMAC4: TEND4; GPT2: GTIOC2B; GPT2: GTIOC2BN; IRQ: IRQ13; RIIC6: SCL6; RSCI5: RXD5_MISO5_SCL5; SSIU1: SSI1_WS" - None - - 
       P46 AN17 - - - - Disabled - - "CANFD5: CTX5; DMAC2: DACK2; DMAC3: DREQ3; GPT3: GTIOC3A; GPT3: GTIOC3AN; IRQ: IRQ14; RIIC7: SDA7; RSCI5: CTS5N; RSCI5: DE5; RSCI5: SCK5; SSIU1: SSI1_SDATA" - None - - 
       P47 AU19 - - - - Disabled - - "CANFD5: CRX5; DMAC2: TEND2; DMAC4: DREQ4; GPT3: GTIOC3B; GPT3: GTIOC3BN; IRQ: IRQ15; RIIC7: SCL7; RSCI5: DE5; RSCI5: SS5_CTS5N_RTS5N; SSIU2: SSI2_SDATA" - None - - 
-      P50 AT20 GPIO - - - "Input mode" - - "GPT8: GTIOC8A; GPT8: GTIOC8AN; IRQ: IRQ0; RSCI0: TXD0_MOSI0_SDA0" - IO - - 
+      P50 AT20 - - - - Disabled - - "GPT8: GTIOC8A; GPT8: GTIOC8AN; IRQ: IRQ0; RSCI0: TXD0_MOSI0_SDA0" - None - - 
       P51 AN21 - - - - Disabled - - "GPT8: GTIOC8B; GPT8: GTIOC8BN; IRQ: IRQ1; RSCI0: RXD0_MISO0_SCL0" - None - - 
-      P52 AP22 GPIO GPS_SAFETY_SWITCH - - "Input mode" - - "GPT10: GTIOC10A; GPT10: GTIOC10AN; IRQ: IRQ4; RSCI0: CTS0N; RSCI0: DE0; RSCI0: SCK0; RSCI1: TXD1_MOSI1_SDA1" "Using for GPS M10 SAFETY SWITCH" IO - - 
+      P52 AP22 RSCI1_TXD1_MOSI1_SDA1 GPS_SAFETY_SWITCH X4 - "Peripheral mode" - - "GPT10: GTIOC10A; GPT10: GTIOC10AN; IRQ: IRQ4; RSCI0: CTS0N; RSCI0: DE0; RSCI0: SCK0; RSCI1: TXD1_MOSI1_SDA1" "Using for GPS M10 SAFETY SWITCH" IO - - 
       P53 AU20 GPT10_GTIOC10B - X4 - "Peripheral mode" - - "GPT10: GTIOC10B; GPT10: GTIOC10BN; IRQ: IRQ5; RSCI0: DE0; RSCI0: SS0_CTS0N_RTS0N; RSCI1: RXD1_MISO1_SCL1" - IO - - 
       P54 AM20 - - - - Disabled - - "GPT12: GTIOC12A; GPT12: GTIOC12AN; IRQ: IRQ8; RSCI2: TXD2_MOSI2_SDA2" - None - - 
       P55 AR22 - - - - Disabled - - "GPT12: GTIOC12B; GPT12: GTIOC12BN; IRQ: IRQ9; RSCI2: RXD2_MISO2_SCL2" - None - - 
@@ -3215,7 +3215,7 @@ FSP Configuration
       P92 AN30 RSPI0_RSPCKA - X6 - "Peripheral mode" - - "IRQ: IRQ2; RSCI0: TXD0_MOSI0_SDA0; RSCI6: CTS6N; RSCI6: DE6; RSCI6: SCK6; RSPI0: RSPCKA" - IO - - 
       P93 AM30 RSPI0_SSLA0 - X6 - "Peripheral mode" - - "ADG: AUDIO_CLKB; IRQ: IRQ3; RSCI0: RXD0_MISO0_SCL0; RSCI6: DE6; RSCI6: SS6_CTS6N_RTS6N; RSPI0: SSLA0; SD0: SD0WP; SD1: SD1WP" - IO - - 
       P94 AM29 RSPI0_SSLA1 - X6 - "Peripheral mode" - - "ADG: AUDIO_CLKC; GPT4: GTIOC4A; GPT4: GTIOC4AN; GPT8: GTIOC8A; GPT8: GTIOC8AN; IRQ: IRQ4; RSCI7: TXD7_MOSI7_SDA7; RSPI0: SSLA1; SD0: SD0CD; SD1: SD1CD; SPDIF0: SPDIF0_OUT" - IO - - 
-      P95 AR30 - - - - Disabled - - "GPT4: GTIOC4B; GPT4: GTIOC4BN; GPT8: GTIOC8B; GPT8: GTIOC8BN; IRQ: IRQ5; RSCI7: RXD7_MISO7_SCL7; RSPI0: SSLA2; SPDIF0: SPDIF0_IN; SSIU0: SSI0_SCK; USB20: USB20_VBUSEN; USB30: USB30_VBUSEN" - None - - 
+      P95 AR30 RSPI0_SSLA2 - X6 - "Peripheral mode" - - "GPT4: GTIOC4B; GPT4: GTIOC4BN; GPT8: GTIOC8B; GPT8: GTIOC8BN; IRQ: IRQ5; RSCI7: RXD7_MISO7_SCL7; RSPI0: SSLA2; SPDIF0: SPDIF0_IN; SSIU0: SSI0_SCK; USB20: USB20_VBUSEN; USB30: USB30_VBUSEN" - IO - - 
       P96 AN31 GPT9_GTIOC9A - X4 - "Peripheral mode" - - "ADG: AUDIO_CLKOUT; GPT5: GTIOC5A; GPT5: GTIOC5AN; GPT9: GTIOC9A; GPT9: GTIOC9AN; IRQ: IRQ6; RSCI1: TXD1_MOSI1_SDA1; RSCI7: CTS7N; RSCI7: DE7; RSCI7: SCK7; RSPI0: SSLA3; SSIU0: SSI0_WS; USB20: USB20_OVRCURN; USB30: USB30_OVRCURN" - IO - - 
       P97 AN29 GPIO GPS_BUZZER X4 - "Output mode (Low & Into Input)" - - "ADC: ADTRG; ADG: AUDIO_CLKOUT; GPT5: GTIOC5B; GPT5: GTIOC5BN; GPT9: GTIOC9B; GPT9: GTIOC9BN; IRQ: IRQ7; RSCI1: RXD1_MISO1_SCL1; RSCI7: DE7; RSCI7: SS7_CTS7N_RTS7N; SSIU0: SSI0_SDATA" "Using for GPS M10 BUZZER" IO - - 
       PA0 AM28 - - - - Disabled - - "IRQ: IRQ8; SD0: SD0IOVS; SD1: SD1WP; SD2: SD2WP" - None - - 
@@ -4197,9 +4197,6 @@ FSP Configuration
     Pin Output Support: Enabled
     Write Protect Enable: Disabled
     
-  Module "External IRQ Driver on r_intc_tint"
-    Parameter Checking: Default (BSP)
-    
   Module "Transfer Driver on r_dmac_b"
     Parameter Checking: Default (BSP)
     
@@ -4399,76 +4396,14 @@ FSP Configuration
       Byte Swapping: Disable
       Clock Source: PCLK
       Bitrate: 1000000
-      Clock Delay: 1 Clock
-      SSL Negation Delay: 1 Clock
-      Next Access Delay: 1 Clock
+      Clock Delay: 4 Clocks
+      SSL Negation Delay: 4 Clocks
+      Next Access Delay: 4 Clocks
       SSL Level Keep: Enable
       Transmit FIFO Threshold: 0
       Receive FIFO Threshold: 0
       Receive Data Ready Detect Adjustment: 0
       
-      Instance "g_transfer0 Transfer Driver on r_dmac_b SPI0_TXI"
-        Name: g_transfer0
-        Unit: Unit 0
-        Channel: 0
-        Mode: Normal
-        Source Data Size: 2 Bytes
-        Destination Data Size: 2 Bytes
-        Destination Address Mode: Fixed
-        Source Address Mode: Incremented
-        Activation Source: SPI0_TXI
-        DMA Activation Request Source Select: Requested by a transfer source module
-        DACK Output mode: No configuration required for this device
-        External DREQ Input Pin Select: Not use external DREQ pin
-        External DACK Output Pin Select: No Output
-        External TEND Output Pin Select: No Output
-        External DREQ Detection Mode: Low Level
-        DMAC Mode: Register Mode
-        Callback: g_spi_imu_tx_transfer_callback
-        Context: NULL
-        Transfer End Interrupt Enable: Enabled
-        Transfer End Interrupt Priority: 14
-        Transfer Interval: 0
-        Channel Priority: Fixed
-        Transfer Continuation: DMA transfer only once
-        Setting 1 Destination Address: NULL
-        Setting 1 Source Address: NULL
-        Setting 1 Total Number of Transfer Bytes: 0
-        Setting 2 Destination Address: NULL
-        Setting 2 Source Address: NULL
-        Setting 2 Total Number of Transfer Bytes: 1
-        
-      Instance "g_transfer1 Transfer Driver on r_dmac_b SPI0_RXI"
-        Name: g_transfer1
-        Unit: Unit 0
-        Channel: 1
-        Mode: Normal
-        Source Data Size: 2 Bytes
-        Destination Data Size: 2 Bytes
-        Destination Address Mode: Incremented
-        Source Address Mode: Fixed
-        Activation Source: SPI0_RXI
-        DMA Activation Request Source Select: Requested by a transfer destination module
-        DACK Output mode: No configuration required for this device
-        External DREQ Input Pin Select: Not use external DREQ pin
-        External DACK Output Pin Select: No Output
-        External TEND Output Pin Select: No Output
-        External DREQ Detection Mode: Low Level
-        DMAC Mode: Register Mode
-        Callback: g_spi_imu_rx_transfer_callback
-        Context: NULL
-        Transfer End Interrupt Enable: Enabled
-        Transfer End Interrupt Priority: 14
-        Transfer Interval: 0
-        Channel Priority: Fixed
-        Transfer Continuation: DMA transfer only once
-        Setting 1 Destination Address: NULL
-        Setting 1 Source Address: NULL
-        Setting 1 Total Number of Transfer Bytes: 0
-        Setting 2 Destination Address: NULL
-        Setting 2 Source Address: NULL
-        Setting 2 Total Number of Transfer Bytes: 1
-        
     Instance "g_uart_rc UART (r_sci_b_uart)"
       General: Name: g_uart_rc
       General: Channel: 6
@@ -4739,14 +4674,6 @@ FSP Configuration
       Interrupts: Underflow Interrupt Priority: 14
       Interrupts: Generate at Start: Disable
       Extra Features: GTM Mode: Interval timer mode
-      
-    Instance "g_external_irq0 External IRQ Driver on r_intc_tint"
-      Name: g_external_irq0
-      Channel: 0
-      TINT Source: P50
-      Trigger: Falling
-      Callback: mpu_drdy_callback
-      Pin Interrupt Priority: 14
       
     Instance "g_uart_mav UART (r_sci_b_uart)"
       General: Name: g_uart_mav
@@ -5020,7 +4947,7 @@ FSP Configuration
       Channel: 7
       Slave Address : 0x76
       Address Mode: 7-Bit
-      Rate: Fast-mode
+      Rate: Standard
       Custom Rate (bps): 0
       SDA Output Delay (nano seconds): 300
       Noise Filter Clock Select: The on-chip baud rate generator source clock divided by 1
@@ -5040,6 +4967,33 @@ FSP Configuration
       Interrupts: Underflow Interrupt Priority: 14
       Interrupts: Generate at Start: Disable
       Extra Features: GTM Mode: Interval timer mode
+      
+    Instance "g_uart_debug_tx UART (r_sci_b_uart)"
+      General: Name: g_uart_debug_tx
+      General: Channel: 1
+      General: Data Bits: 8bits
+      General: Parity: None
+      General: Stop Bits: 1bit
+      Baud: Baud Rate: 115200
+      Baud: Baud Rate Modulation: Disabled
+      Baud: Max Error (%): 5
+      Flow Control: CTS/RTS Selection: Hardware RTS
+      Flow Control: Software RTS Port: Disabled
+      Flow Control: Software RTS Pin: Disabled
+      Extra: Clock Source: Internal Clock
+      Extra: Start bit detection: Falling Edge
+      Extra: Noise Filter: Disable
+      Extra: Receive FIFO Trigger Level: Max
+      Extra: RS-485: DE Pin: Disable
+      Extra: RS-485: DE Pin Polarity: Active High
+      Extra: RS-485: DE Pin Assertion Time: 1
+      Extra: RS-485: DE Pin Negation Time: 1
+      Extra: Half Data Function: Disable
+      Interrupts: Callback: rzv_uart_debug_callback
+      Interrupts: Receive Interrupt Priority: 14
+      Interrupts: Transmit Data Empty Interrupt Priority: 14
+      Interrupts: Transmit End Interrupt Priority: 14
+      Interrupts: Error Interrupt Priority: 14
       
   Thread "Main Task"
     Symbol: main_task

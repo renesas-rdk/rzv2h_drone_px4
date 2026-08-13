@@ -14,8 +14,10 @@ Complete bill of materials, 40-pin GPIO pinout, and wiring for the RZ/V2H autono
 | **Frame (Recommended)** | LX450 | 1 | Better RDK mounting compatibility |
 | **Frame (Optional)** | S500 | 1 | Top plate alignment issues with RDK |
 | **GPS** | u-blox M10 | 1 | UART 9600 baud (up to 18 Hz update) |
-| **IMU** | MPU9250 | 1 | SPI 9-axis (accel/gyro/mag AK8963) |
-| **Barometer** | BMP280 | 1 | I2C, altitude backup sensor |
+| **Sensor Extension Board** | RDK Extension Board (schematic SCH-20260713) | 1 | Custom PCB — carries all IMU/mag/baro/battery-monitor sensors + GPS/telemetry/TFmini/ESC/fs-a8s connectors, plugs onto the RDK 40-pin header |
+| **IMU** | ICM-45686 ×3 | 3 | SPI, polled mode, one shared bus (`icm45686 -c 1/2/3`); replaces single MPU9250 |
+| **Magnetometer** | BMM150 | 1 | I2C7 @ 0x10, primary mag; replaces MPU9250's internal AK8963 |
+| **Barometer** | BMP390L | 1 | I2C7 @ 0x77 (bmp388 driver); replaces BMP280. **Do not substitute ICP-20100** — see note below |
 | **LiDAR** | TFmini Plus | 1 | UART, primary altitude (0.1–12 m range) |
 | **Telemetry** | Sik V3 433/915 MHz | 1 | MAVLink @ 57600 baud to QGC |
 | **RC Receiver** | FlySky fs-a8s | 1 | SBUS (requires inverter circuit) |
@@ -24,7 +26,7 @@ Complete bill of materials, 40-pin GPIO pinout, and wiring for the RZ/V2H autono
 | **ESC** | SkyWalker 40A | 4 | Electronic speed controllers |
 | **Motor** | Sunny Sky X2216 1100kV | 4 | Brushless DC |
 | **Camera** | Logitech C920 (USB) | 1 | CA55/Linux vision sensor |
-| **Power Module** | Holybro PM03D | 1 | Power distribution + 5V regulator |
+| **Power Module** | Holybro PM03D | 1 | Power distribution + 5V regulator + INA228 battery monitor (I2C7 @ 0x45, CLIK-Mate connector) |
 | **LiPo Battery** | 4S 5300mAh | 1 | Main power source |
 | **Charger** | IMAX B6 (6A discharger) | 1 | Balance charging |
 | **SBUS Inverter** | C1815 NPN transistor | 1 | Signal inversion for RC receiver |
@@ -54,8 +56,8 @@ Complete bill of materials, 40-pin GPIO pinout, and wiring for the RZ/V2H autono
 
 | Pin # | RPi Label | Peripheral |
 |-------|-----------|-----------|
-| **3** | GPIO02/SDA | **BMP280 SDA** (I2C7) |
-| **5** | GPIO03/SCL | **BMP280 SCL** (I2C7) |
+| **3** | GPIO02/SDA | **I2C7 SDA** — shared bus: BMM150 mag (0x10), BMP390L baro (0x77), INA228 battery monitor (0x45) |
+| **5** | GPIO03/SCL | **I2C7 SCL** — same shared bus as above |
 | **7** | GPIO04 | **fs-a8s RX** (UART6) |
 | **8** | GPIO14/TXD | **Sik TX** (UART5) |
 | **10** | GPIO15/RXD | **Sik RX** (UART5) |
@@ -63,15 +65,20 @@ Complete bill of materials, 40-pin GPIO pinout, and wiring for the RZ/V2H autono
 | **15** | GPIO22 | **TFmini RX** (UART4) |
 | **16** | GPIO23 | **GPS RX** (UART9) |
 | **18** | GPIO24 | **GPS TX** (UART9) |
-| **19** | GPIO10/MOSI | **MPU9250 MOSI** (SPI) |
-| **21** | GPIO09/MISO | **MPU9250 MISO** (SPI) |
-| **22** | GPIO25 | **MPU9250 INT** |
-| **23** | GPIO11/SCK | **MPU9250 SCK** (SPI) |
-| **24** | GPIO08/CE0 | **MPU9250 CS** (SPI) |
+| **19** | GPIO10/MOSI | **SPI0 MOSI** — shared by all 3× ICM-45686 |
+| **21** | GPIO09/MISO | **SPI0 MISO** — shared by all 3× ICM-45686 |
+| **22** | GPIO25 | **ICM-45686 #1 INT1** — wired but unused (driver runs polled, `-P`) |
+| **23** | GPIO11/SCK | **SPI0 SCK** — shared by all 3× ICM-45686 |
+| **24** | GPIO08/CE0 | **SPI0 CS0** — ICM-45686 #1 chip-select (`-c 1`) |
 | **31** | GPIO06 | **ESC4 PWM** (GPT10B) |
 | **32** | GPIO12/PWM0 | **ESC1 PWM** (GPT6A) |
 | **33** | GPIO13/PWM1 | **ESC2 PWM** (GPT7B) |
 | **35** | GPIO19/PCM_FS | **ESC3 PWM** (GPT9A) |
+
+Chip-selects for IMU #2 (`-c 2`) and IMU #3 (`-c 3`) are the extension board's SSLA1/SSLA2 lines
+(SoC pins P94/P95) — see the schematic (`Extension board for drone_SCH-20260713.pdf`) for their
+exact position on the 40-pin connector; not re-derived here to avoid mis-stating a physical pin
+number from source that wasn't fully verifiable.
 
 **UART mapping:**
 - UART4 (P70/P71): TFmini → `/dev/ttyS4`
@@ -87,14 +94,20 @@ Complete bill of materials, 40-pin GPIO pinout, and wiring for the RZ/V2H autono
 
 ### Key Connections
 
-**IMU (MPU9250) – SPI:**
+The extension board plugs onto the RDK 40-pin header as a single unit — the connections below
+describe what the extension board wires internally, not hand-soldered jumpers.
+
+**IMU array (3× ICM-45686) – SPI0:**
 ```
-VCC→RDK 3.3V (Pin1), GND→GND, SCK→Pin23, MOSI→Pin19, MISO→Pin21, INT→Pin22, CS→Pin24
+VCC→+3V3, GND→GND, SCK→Pin23, MOSI→Pin19, MISO→Pin21
+CS_IMU1→Pin24 (SSLA0), CS_IMU2→SSLA1 (P94), CS_IMU3→SSLA2 (P95)
+INT1 of IMU#1 → Pin22, wired but unused (polled mode)
 ```
 
-**Barometer (BMP280) – I2C:**
+**Mag + Baro + Battery monitor – I2C7 (shared bus):**
 ```
-VCC→RDK 3.3V (Pin1), GND→GND, SDA→Pin3, SCL→Pin5
+VCC→+3V3 (BMM150/BMP390L) or PM03D CLIK-Mate (INA228), GND→GND, SDA→Pin3, SCL→Pin5
+BMM150 @0x10, BMP390L @0x77, INA228 @0x45
 ```
 
 **GPS M10 – UART:**
@@ -129,8 +142,9 @@ ESC1→Pin32, ESC2→Pin33, ESC3→Pin35, ESC4→Pin31, GND→Pin34
 ## Power System
 
 > **Power rails:**
-> - **3.3V sensors** (MPU9250, BMP280): power directly from the **RDK 3.3V header pin** (Pin 1 or Pin 17) — no external regulator needed.
+> - **3.3V sensors** (3× ICM-45686, BMM150, BMP390L, on the extension board): power directly from the **RDK 3.3V header pin** (Pin 1 or Pin 17) — no external regulator needed.
 > - **5V peripherals** (TFmini Plus, Sik Telemetry, GPS M10, RC Receiver): power from **PM03D 5V output** directly — do **not** use the RDK 5V header rail.
+> - **INA228 battery monitor**: powered + read through the PM03D CLIK-Mate connector (I2C7, shares the sensor bus).
 > - **ESC / motors**: powered from the PM03D main battery rail.
 
 ---
@@ -147,14 +161,27 @@ gps start -d /dev/ttyS9 -b 115200
 tfmini start -d /dev/ttyS4
 ```
 
-**MPU9250**: SPI up to 10 MHz, 3-axis accel/gyro, internal MAG (AK8963)
+**ICM-45686 ×3**: SPI0, polled (`-P`), chip-selects 1/2/3, one `sleep 1` between each start
 ```bash
-mpu9250 -S -R 4 -M  # -M enables internal magnetometer
+icm45686 -s -b 0 -c 1 -P -R 0 start
+icm45686 -s -b 0 -c 2 -P -R 0 start
+icm45686 -s -b 0 -c 3 -P -R 0 start
 ```
 
-**BMP280**: I2C @ addr 0x76/0x77, altitude backup
+**BMM150**: I2C7 @ 0x10, primary magnetometer
 ```bash
-bmp280 start -X  # -X for external I2C
+bmm150 -I -b 7 -a 0x10 -R 0 start
+```
+
+**BMP390L**: I2C7 @ 0x77, `bmp388` driver, fused via `EKF2_BARO_CTRL`
+```bash
+bmp388 -I -b 7 -a 0x77 start
+```
+> Do **not** use `icp201xx`/ICP-20100 in its place — see the clock-stretch warning above.
+
+**INA228** (PM03D battery monitor): I2C7 @ 0x45
+```bash
+ina228 -I -b 7 start
 ```
 
 **Sik Telemetry**: MAVLink @ 57600 baud
@@ -168,7 +195,10 @@ bmp280 start -X  # -X for external I2C
 
 ## Build Photos
 
-Real drone assembly and wiring details available in `assets/` directory.
+<img src="assets/real_drone_top1.png" width="700" alt="Real drone, top view, with the new sensor extension board mounted"/>
+
+Top view with the new sensor extension board (3× ICM-45686 + BMM150 + BMP390L) mounted. More
+assembly and wiring photos available in the `assets/` directory.
 
 ---
 

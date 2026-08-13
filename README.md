@@ -34,7 +34,8 @@ PX4 v1.16 runs on the Cortex-R8 (FreeRTOS+POSIX). A ROS 2 autonomy stack runs on
 │                                                                        │
 │  ┌──────────────────────────────────────────────────────────────────┐  │
 │  │   40-pin GPIO Header (Raspberry Pi compatible)                   │  │
-│  │   IMU(SPI) │ Baro(I2C) │ GPS(UART) │ LiDAR(UART) │ 4×ESC(PWM)    │  │
+│  │   3×IMU(SPI) │ Mag+Baro+Batt(I2C) │ GPS(UART)                    │  │
+│  │   LiDAR(UART) │ 4×ESC(PWM) |                                     │  │
 │  │   Telemetry(UART) │ RC Receiver(SBUS/UART)                       │  │
 │  └──────────────────────────────────────────────────────────────────┘  │
 └────────────────────────────────────────────────────────────────────────┘
@@ -48,8 +49,10 @@ PX4 v1.16 runs on the Cortex-R8 (FreeRTOS+POSIX). A ROS 2 autonomy stack runs on
 |-----------|-------|
 | Flight Controller | Renesas RZ/V2H RDK |
 | Frame | LX450 (recommended) |
-| IMU | MPU9250 (SPI) |
-| Barometer | BMP280 (I2C) |
+| IMU | 3× ICM-45686 (SPI, polled) |
+| Magnetometer | BMM150 (I2C) |
+| Barometer | BMP390L (I2C) — **not** ICP-20100 (I2C pins lack clock-stretch support) |
+| Battery Monitor | INA228 on PM03D (I2C) |
 | GPS | u-blox M10 (UART) |
 | LiDAR | TFmini Plus (UART) |
 | Telemetry | Sik V3 433/915 MHz |
@@ -201,6 +204,10 @@ This board has no NuttX interactive shell (no `nsh>`). All sensor and driver con
 5. Deploy:                 ./compile.sh deploy-cr8
 6. Verify in QGC:          Analyze Tools → MAVLink Inspector → check sensor topic
 ```
+
+> **Current production board (2026-08 sensor extension board):** the walkthrough below is kept as
+> a generic single-IMU tutorial. The actual `rcS` on this board runs **3× ICM-45686** (polled,
+> chip-selects 1/2/3), **BMM150** mag, **BMP390L** baro, and **INA228** battery monitor — see the live `px4/boards/renesas/rzv/init/rcS` for the real, current startup lines.
 
 ### Example: replace MPU9250 with ICM-45686 (SPI)
 
